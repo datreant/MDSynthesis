@@ -417,7 +417,7 @@ class Container(object):
             *uuid*
                 unique identifier string for this Container
         """
-        return self._backend.filename.split('.')[1]
+        return os.path.basename(self._backend.filename).split('.')[1]
 
     def _new_uuid(self):
         """Generate new uuid for Container.
