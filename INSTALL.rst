@@ -28,7 +28,7 @@ Then install PyTables and everything else ::
 
 Then clone the repository and switch to the master branch ::
 
-    git clone git@github.com:dotsdl/MDSynthesis.git
+    git clone git@github.com:Becksteinlab/MDSynthesis.git
     cd MDSynthesis
     git checkout master
 

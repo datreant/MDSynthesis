@@ -11,8 +11,8 @@ from setuptools import setup
 
 setup(name='mdsynthesis',
       version='0.5.0',
-      author='David Dotson', 
-      author_email='dotsdl@gmail.com',
+      maintainer='David Dotson', 
+      maintainer_email='dotsdl@gmail.com',
       packages=['mdsynthesis', 'mdsynthesis.core'],
       scripts=['scripts/mds_convert_pre_to_0.5.0.py'],
       license='GPL 2',
