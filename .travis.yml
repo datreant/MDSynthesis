@@ -28,7 +28,7 @@ install:
 
 # run tests
 script: 
-  - py.test --cov mdsynthesis --pep8 mdsynthesis tests/
+  - py.test --cov mdsynthesis --pep8 mdsynthesis
 
 after_success:
   - codecov

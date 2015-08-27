@@ -4,33 +4,10 @@
 
 import mdsynthesis as mds
 import pytest
-import os
 import py.path
 
 import MDAnalysis
 from MDAnalysisTests.datafiles import GRO, XTC
-
-
-class TestFoxhound:
-    """Test Foxhound functionality"""
-
-    @pytest.fixture
-    def container(self, tmpdir):
-        with tmpdir.as_cwd():
-            c = mds.containers.Container('testcontainer')
-        return c
-
-    @pytest.fixture
-    def sim(self, tmpdir):
-        with tmpdir.as_cwd():
-            c = mds.Sim('testsim')
-        return c
-
-    @pytest.fixture
-    def group(self, tmpdir):
-        with tmpdir.as_cwd():
-            c = mds.Group('testgroup')
-        return c
 
 
 class TestUniversehound:

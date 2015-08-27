@@ -13,9 +13,13 @@ setup(name='mdsynthesis',
       version='0.5.0',
       maintainer='David Dotson', 
       maintainer_email='dotsdl@gmail.com',
-      packages=['mdsynthesis', 'mdsynthesis.core'],
-      scripts=['scripts/mds_convert_pre_to_0.5.0.py'],
+      packages=['mdsynthesis', 'mdsynthesis.tests'],
       license='GPL 2',
       long_description=open('README.rst').read(),
-      requires=['pandas', 'tables', 'h5py', 'MDAnalysis', 'scandir']
+      requires=['datreant',
+                'pandas',
+                'tables',
+                'h5py',
+                'MDAnalysis',
+                'scandir']
      )
