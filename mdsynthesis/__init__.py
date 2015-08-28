@@ -20,7 +20,7 @@ science, letting the computer handle the lower-level logistical details.
 """
 # Bring some often used objects into the current namespace
 from mdsynthesis.treants import Sim
-from datreant import Group
+from datreant import Treant, Group, register
 from datreant.collections import Bundle
 from datreant.manipulators import *
 import datreant
@@ -29,5 +29,4 @@ import mdsynthesis.persistence
 __all__ = ['Sim', 'Group', 'Coordinator', 'Bundle']
 __version__ = "0.5.1"  # NOTE: keep in sync with RELEASE in setup.py
 
-datreant._treants['Sim'] = Sim
-datreant._treantfiles['Sim'] = mdsynthesis.persistence.SimFile
+register(Sim)

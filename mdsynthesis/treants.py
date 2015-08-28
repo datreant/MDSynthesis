@@ -6,6 +6,7 @@ import os
 
 from datreant.treants import Treant
 from mdsynthesis import aggregators
+from mdsynthesis import persistence
 from MDAnalysis import Universe
 
 
@@ -14,6 +15,7 @@ class Sim(Treant):
 
     """
     _treanttype = 'Sim'
+    _backends = {'pytables': ['.h5', persistence.SimFile]}
 
     def __init__(self, sim, universe=None, uname='main', location='.',
                  coordinator=None, categories=None, tags=None):
