@@ -6,7 +6,6 @@ import os
 import glob
 
 from datreant.treants import Treant, Group
-from datreant.filesystem import statefilename
 
 
 class Universehound(object):

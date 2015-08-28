@@ -7,6 +7,7 @@ import tables
 import numpy as np
 import os
 from datreant.persistence import File, TreantFile
+import mdsynthesis
 
 # max length in characters for all paths
 pathlength = 511
@@ -23,6 +24,17 @@ class SimFile(TreantFile):
     elements of the data structure, as well as the data structure definition.
 
     """
+    class _MDSversion(tables.IsDescription):
+        """Table definition for storing version number of file schema.
+
+        All strings limited to hardcoded size for now.
+
+        """
+        # version of MDS file schema corresponds to allows future-proofing
+        # of old objects so that formats of new releases can be automatically
+        # built from old ones
+        version = tables.StringCol(15)
+
     class _Default(tables.IsDescription):
         """Table definition for storing default universe preference.
 
@@ -136,6 +148,52 @@ class SimFile(TreantFile):
         except tables.NoSuchNodeError:
             table = self.handle.create_table(
                 '/', 'default', self._Default, 'default')
+
+    @File._read_state
+    def get_MDS_version(self):
+        """Get Sim MDS version.
+
+        :Returns:
+            *version*
+                MDS version of Treant
+
+        """
+        table = self.handle.get_node('/', 'mds_version')
+        return table.cols.version[0]
+
+    # TODO: need a proper schema update mechanism
+    @File._write_state
+    def update_MDS_schema(self):
+        """Update MDS schema of file.
+
+        :Returns:
+            *version*
+                version number of file's new schema
+        """
+        try:
+            table = self.handle.get_node('/', 'mds_version')
+            version = table.cols.version[0]
+        except tables.NoSuchNodeError:
+            version = mdsynthesis.__version__
+
+        return version
+
+    @File._write_state
+    def update_MDS_version(self, version):
+        """Update MDS version of Sim.
+
+        :Arugments:
+            *version*
+                new MDS version of Treant
+        """
+        try:
+            table = self.handle.get_node('/', 'mds_version')
+            table.cols.version[0] = version
+        except tables.NoSuchNodeError:
+            table = self.handle.create_table(
+                '/', 'mds_version', self._MDSversion, 'mds_version')
+            table.row['version'] = version
+            table.row.append()
 
     @File._write_state
     def update_default(self, universe=None):
