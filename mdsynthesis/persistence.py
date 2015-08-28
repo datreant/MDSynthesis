@@ -124,7 +124,7 @@ class SimFile(TreantFile):
         except tables.NoSuchNodeError:
             self.update_default()
 
-    @File._write_state
+    @File._write
     def _make_universegroup(self):
         """Make universes and universe groups.
 
@@ -136,7 +136,7 @@ class SimFile(TreantFile):
         except tables.NoSuchNodeError:
             group = self.handle.create_group('/', 'universes', 'universes')
 
-    @File._write_state
+    @File._write
     def _make_default_table(self):
         """Make table for storing default universe.
 
@@ -149,7 +149,7 @@ class SimFile(TreantFile):
             table = self.handle.create_table(
                 '/', 'default', self._Default, 'default')
 
-    @File._read_state
+    @File._read
     def get_MDS_version(self):
         """Get Sim MDS version.
 
@@ -162,7 +162,7 @@ class SimFile(TreantFile):
         return table.cols.version[0]
 
     # TODO: need a proper schema update mechanism
-    @File._write_state
+    @File._write
     def update_MDS_schema(self):
         """Update MDS schema of file.
 
@@ -178,7 +178,7 @@ class SimFile(TreantFile):
 
         return version
 
-    @File._write_state
+    @File._write
     def update_MDS_version(self, version):
         """Update MDS version of Sim.
 
@@ -195,7 +195,7 @@ class SimFile(TreantFile):
             table.row['version'] = version
             table.row.append()
 
-    @File._write_state
+    @File._write
     def update_default(self, universe=None):
         """Mark the given universe as the default.
 
@@ -213,7 +213,7 @@ class SimFile(TreantFile):
             table.row['default'] = universe
             table.row.append()
 
-    @File._read_state
+    @File._read
     def get_default(self):
         """Get default universe.
 
@@ -231,7 +231,7 @@ class SimFile(TreantFile):
 
         return default
 
-    @File._read_state
+    @File._read
     def list_universes(self):
         """List universe names.
 
@@ -244,7 +244,7 @@ class SimFile(TreantFile):
 
         return group.__members__
 
-    @File._read_state
+    @File._read
     def get_universe(self, universe):
         """Get topology and trajectory paths for the desired universe.
 
@@ -279,7 +279,7 @@ class SimFile(TreantFile):
 
         return (topology, trajectory)
 
-    @File._write_state
+    @File._write
     def add_universe(self, universe, topology, *trajectory):
         """Add a universe definition to the Sim object.
 
@@ -341,7 +341,7 @@ class SimFile(TreantFile):
         except tables.NodeError:
             pass
 
-    @File._write_state
+    @File._write
     def del_universe(self, universe):
         """Delete a universe definition.
 
@@ -358,7 +358,7 @@ class SimFile(TreantFile):
                     "No such universe '{}';".format(universe) +
                     " nothing to remove.")
 
-    @File._write_state
+    @File._write
     def rename_universe(self, universe, newname):
         """Rename a universe definition.
 
@@ -379,7 +379,7 @@ class SimFile(TreantFile):
                     "A universe '{}' already exists;".format(universe) +
                     " remove or rename it first.")
 
-    @File._write_state
+    @File._write
     def update_resnums(self, universe, resnums):
         """Update resnum definition for the given universe.
 
@@ -420,7 +420,7 @@ class SimFile(TreantFile):
             table.row['resnum'] = item
             table.row.append()
 
-    @File._read_state
+    @File._read
     def get_resnums(self, universe):
         """Get the resnum definition for the given universe.
 
@@ -442,7 +442,7 @@ class SimFile(TreantFile):
 
         return resnums
 
-    @File._write_state
+    @File._write
     def del_resnums(self, universe):
         """Delete resnum definition from specified universe.
 
@@ -452,7 +452,7 @@ class SimFile(TreantFile):
         """
         self.handle.remove_node('/universes/{}'.format(universe), 'resnums')
 
-    @File._read_state
+    @File._read
     def list_selections(self, universe):
         """List selection names.
 
@@ -475,7 +475,7 @@ class SimFile(TreantFile):
 
         return group.__members__
 
-    @File._read_state
+    @File._read
     def get_selection(self, universe, handle):
         """Get a stored atom selection for the given universe.
 
@@ -499,7 +499,7 @@ class SimFile(TreantFile):
 
         return selection
 
-    @File._write_state
+    @File._write
     def add_selection(self, universe, handle, *selection):
         """Add an atom selection definition for the named Universe definition.
 
@@ -537,7 +537,7 @@ class SimFile(TreantFile):
                 '/universes/{}/selections'.format(universe), handle, selection,
                 handle)
 
-    @File._write_state
+    @File._write
     def del_selection(self, universe, handle):
         """Delete an atom selection from the specified universe.
 
