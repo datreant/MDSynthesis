@@ -17,47 +17,6 @@ class Sim(Treant):
     _treanttype = 'Sim'
     _backends = {'pytables': ['.h5', persistence.SimFile]}
 
-    def __init__(self, sim, universe=None, uname='main', location='.',
-                 coordinator=None, categories=None, tags=None):
-        """Generate a new or regenerate an existing (on disk) Sim object.
-
-        :Required arguments:
-            *sim*
-                if generating a new Sim, the desired name to give it;
-                if regenerating an existing Sim, string giving the path
-                to the directory containing the Sim object's state file
-
-        :Optional arguments when generating a new Sim:
-            *uname*
-                desired name to associate with universe; this universe
-                will be made the default (can always be changed later)
-            *universe*
-                arguments usually given to an MDAnalysis Universe
-                that defines the topology and trajectory of the atoms
-            *location*
-                directory to place Sim object; default is the current directory
-            *coordinator*
-                directory of the Coordinator to associate with the Sim; if the
-                Coordinator does not exist, it is created; if ``None``, the Sim
-                will not associate with any Coordinator
-            *categories*
-                dictionary with user-defined keys and values; used to give Sims
-                distinguishing characteristics
-            *tags*
-                list with user-defined values; like categories, but useful for
-                adding many distinguishing descriptors
-
-        *Note*: optional arguments are ignored when regenerating an existing
-                Sim
-
-        """
-        if os.path.exists(sim):
-            self._regenerate('Sim', sim)
-        else:
-            self._generate('Sim', sim, universe=universe, uname=uname,
-                           location=location, coordinator=coordinator,
-                           categories=categories, tags=tags)
-
     def __repr__(self):
         if not self._uname:
             out = "<Sim: '{}'>".format(self.name)
@@ -135,19 +94,6 @@ class Sim(Treant):
                         self, self._backend, self._logger)
 
             return self._selections
-
-    def _generate(self, treanttype, treant, universe=None, uname='main',
-                  location='.', coordinator=None, categories=None, tags=None):
-        """Generate new Sim object.
-
-        """
-        super(Sim, self)._generate(treanttype, treant, location=location,
-                                   coordinator=coordinator,
-                                   categories=categories, tags=tags)
-
-        # add universe
-        if (uname and universe):
-            self.universes.add(uname, *universe)
 
     def _placeholders(self):
         """Necessary placeholders for aggregator instances.
