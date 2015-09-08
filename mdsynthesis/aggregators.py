@@ -46,6 +46,9 @@ class Universes(Aggregator):
     def __contains__(self, item):
         return (item in self._backend.list_universes())
 
+    def __iter__(self):
+        return self._backend.list_universes().__iter__()
+
     def __getitem__(self, handle):
         """Attach universe and return a reference to it.
 
