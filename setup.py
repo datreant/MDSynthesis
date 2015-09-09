@@ -25,7 +25,7 @@ setup(name='mdsynthesis',
                 'pandas>=0.16.1',
                 'tables>=3.2.0',
                 'h5py>=2.5.0',
-                'MDAnalysis<=0.10.0',
+                'MDAnalysis>=0.11.0',
                 'scandir>=1.0',
                 'PyYAML>=3.11'
                 ],

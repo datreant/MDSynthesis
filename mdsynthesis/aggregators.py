@@ -406,7 +406,7 @@ class Selections(Aggregator):
         # Conversion function, leave strings alone,
         # turn AtomGroups into their indices
         def conv(x):
-            return x if isinstance(x, basestring) else x.indices()
+            return x if isinstance(x, basestring) else x.indices
 
         self._backend.add_selection(
             self._treant._uname, handle, *map(conv, selection))
@@ -459,7 +459,7 @@ class Selections(Aggregator):
         # - a list of strings
         # - a numpy array of indices
         if isinstance(selstring[0], basestring):
-            return self._treant.universe.selectAtoms(*selstring)
+            return self._treant.universe.select_atoms(*selstring)
         else:
             return self._treant.universe.atoms[selstring]
 

@@ -100,29 +100,29 @@ class TestSim(TestTreant):
             """Test that we can add resnums to a universe."""
             treant.universes.add('lolcats', GRO, XTC)
 
-            protein = treant.universe.selectAtoms('protein')
-            resids = protein.residues.resids()
+            protein = treant.universe.select_atoms('protein')
+            resids = protein.residues.resids
             protein.residues.set_resnum(resids + 3)
 
             treant.universes.resnums('lolcats',
-                                     treant.universe.atoms.resnums())
+                                     treant.universe.residues.resnums)
 
             treant.universes['lolcats']
 
-            protein = treant.universe.selectAtoms('protein')
-            assert (resids + 3 == protein.residues.resnums()).all()
+            protein = treant.universe.select_atoms('protein')
+            assert (resids + 3 == protein.residues.resnums).all()
 
-            # BUG IN MDANALYSIS PREVENTS RESETTING OF RESNUMS
-            # protein.residues.set_resnum(resids + 6)
+            # test resetting of resnums
+            protein.residues.set_resnum(resids + 6)
 
-            # assert (protein.residues.resnums == resids + 6).all()
-            # treant.universes.resnums('lolcats',
-            #                            treant.universe.atoms.resnums())
+            assert (protein.residues.resnums == resids + 6).all()
+            treant.universes.resnums('lolcats',
+                                     treant.universe.residues.resnums)
 
-            # treant.universes['lolcats']
+            treant.universes['lolcats']
 
-            # protein = treant.universe.selectAtoms('protein')
-            # assert (resids + 6 == protein.residues.resnums()).all()
+            protein = treant.universe.select_atoms('protein')
+            assert (resids + 6 == protein.residues.resnums).all()
 
         def test_KeyError(self, treant):
             """Test that a KeyError raised when trying to activate a Universe
@@ -151,12 +151,12 @@ class TestSim(TestTreant):
             treant.selections.add('CA', 'protein and name CA')
             treant.selections.add('someres', 'resid 12')
 
-            CA = treant.universe.selectAtoms('protein and name CA')
-            someres = treant.universe.selectAtoms('resid 12')
+            CA = treant.universe.select_atoms('protein and name CA')
+            someres = treant.universe.select_atoms('resid 12')
 
-            assert (CA.indices() == treant.selections['CA'].indices()).all()
-            assert (someres.indices() ==
-                    treant.selections['someres'].indices()).all()
+            assert (CA.indices == treant.selections['CA'].indices).all()
+            assert (someres.indices ==
+                    treant.selections['someres'].indices).all()
 
         def test_remove_selection(self, treant):
             """Test universe removal"""
@@ -206,18 +206,18 @@ class TestSim(TestTreant):
             treant.selections.add('funky town', 'name N', 'name CA')
             assert 'funky town' in treant.selections
 
-            ref = treant.universe.selectAtoms('name N', 'name CA')
+            ref = treant.universe.select_atoms('name N', 'name CA')
             sel = treant.selections['funky town']
-            assert (ref.indices() == sel.indices()).all()
+            assert (ref.indices == sel.indices).all()
 
         def test_add_selections_multiple_strings_via_setitem(self, treant):
             """Add a selection that has multiple selection strings"""
             treant.selections['funky town 2'] = 'name N', 'name CA'
             assert 'funky town 2' in treant.selections
 
-            ref = treant.universe.selectAtoms('name N', 'name CA')
+            ref = treant.universe.select_atoms('name N', 'name CA')
             sel = treant.selections['funky town 2']
-            assert (ref.indices() == sel.indices()).all()
+            assert (ref.indices == sel.indices).all()
 
         def test_add_selection_as_atomgroup_via_add(self, treant):
             """Make an arbitrary AtomGroup then save selection as AG"""
@@ -227,7 +227,7 @@ class TestSim(TestTreant):
             assert 'ag sel' in treant.selections
 
             ag2 = treant.selections['ag sel']
-            assert (ag.indices() == ag2.indices()).all()
+            assert (ag.indices == ag2.indices).all()
 
         def test_add_selection_as_atomgroup_via_setitem(self, treant):
             """Make an arbitrary AtomGroup then save selection as AG"""
@@ -237,7 +237,7 @@ class TestSim(TestTreant):
             assert 'ag sel 2' in treant.selections
 
             ag2 = treant.selections['ag sel 2']
-            assert (ag.indices() == ag2.indices()).all()
+            assert (ag.indices == ag2.indices).all()
 
 
 class TestReadOnly:

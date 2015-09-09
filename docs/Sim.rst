@@ -12,7 +12,8 @@ also give it a topology and/or trajectory files as we would to an MDAnalysis
 **Universe** ::
     
     >>> from mdsynthesis import Sim
-    >>> s = Sim('scruffy', universe=['path/to/topology', 'path/to/trajectory'])
+    >>> s = Sim('scruffy')
+    >>> s.universes.add('main', 'path/to/topology', 'path/to/trajectory')
 
 This will create a directory ``scruffy`` that contains a single file
 (``Sim.<uuid>.h5``).  That file is a persistent representation of the **Sim** on disk.
@@ -81,8 +82,8 @@ but they should actually go from 10 to 223. If we can't change the topology to r
 this, we could set the resnums for these residues to the canonical values ::
 
     >>> prot = s.universe.selectAtoms('protein')
-    >>> prot.residues.set_resnum(prot.residues.resids() + 9)
-    >>> prot.residues.resnums()
+    >>> prot.residues.set_resnum(prot.residues.resids + 9)
+    >>> prot.residues.resnums
     array([ 10,  11,  12,  13,  14,  15,  16,  17,  18,  19,  20,  21,  22,
             23,  24,  25,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35,
             36,  37,  38,  39,  40,  41,  42,  43,  44,  45,  46,  47,  48,
@@ -109,7 +110,7 @@ and we might save selections using resnums as well. However, resnums aren't
 stored in the topology, so to avoid having to reset resnums manually each time
 we load the **Universe**, we can just store the resnum definition with ::
 
-    >>> s.universes.resnums('main', s.universe.residues.resnums())
+    >>> s.universes.resnums('main', s.universe.residues.resnums)
 
 and the resnum definition will be applied to the **Universe** both now and every
 time it is activated.
