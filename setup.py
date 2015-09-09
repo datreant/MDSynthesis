@@ -10,16 +10,23 @@ For a basic installation just type the command::
 from setuptools import setup
 
 setup(name='mdsynthesis',
-      version='0.5.0',
+      version='0.6.0-dev',
       maintainer='David Dotson', 
       maintainer_email='dotsdl@gmail.com',
       packages=['mdsynthesis', 'mdsynthesis.tests'],
       license='GPL 2',
       long_description=open('README.rst').read(),
-      requires=['datreant',
-                'pandas',
-                'tables',
-                'h5py',
-                'MDAnalysis',
-                'scandir']
+      dependency_links=[
+      'http://github.com/dotsdl/datreant/tarball/develop#egg=datreant-0.6.0-dev',
+      ],
+      install_requires=[
+                'numpy',
+                'datreant>=0.6.0-dev',
+                'pandas>=0.16.1',
+                'tables>=3.2.0',
+                'h5py>=2.5.0',
+                'MDAnalysis<=0.10.0',
+                'scandir>=1.0',
+                'PyYAML>=3.11'
+                ],
      )

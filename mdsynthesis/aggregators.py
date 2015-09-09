@@ -237,7 +237,7 @@ class Universes(Aggregator):
         resnums = self._backend.get_resnums(self._treant._uname)
 
         if resnums:
-            self._treant._universe.residues.set_resnum(resnums)
+            self._treant._universe.residues.set_resnums(resnums)
 
     def resnums(self, handle, resnums):
         """Define resnums for the given universe.

@@ -52,11 +52,13 @@ A brief user guide is available on `Read the Docs
 
 Dependencies
 ============
-* MDAnalysis: 0.9.1 or higher
+* datreant: 0.6.0-dev
+* MDAnalysis: 0.9.1 up to 0.10.0
 * pandas: 0.16.1 or higher
 * PyTables: 3.2.0 or higher
 * h5py: 2.5.0 or higher
 * scandir: 1.0 or higher
+* PyYAML: 3.11 or higher
 
 Contributing
 ============
