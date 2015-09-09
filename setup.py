@@ -21,6 +21,8 @@ setup(name='mdsynthesis',
       ],
       install_requires=[
                 'numpy',
+                'numexpr',
+                'Cython',
                 'datreant>=0.6.0-dev',
                 'pandas>=0.16.1',
                 'tables>=3.2.0',
