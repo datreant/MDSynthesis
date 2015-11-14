@@ -24,7 +24,6 @@ from datreant import Treant, Group, register
 from datreant.collections import Bundle
 from datreant.manipulators import *
 import datreant
-import mdsynthesis.persistence
 
 __all__ = ['Sim', 'Group', 'Coordinator', 'Bundle']
 __version__ = "0.5.1"  # NOTE: keep in sync with RELEASE in setup.py

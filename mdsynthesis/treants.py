@@ -5,8 +5,8 @@ Basic Treant objects: the organizational units for :mod:`mdsynthesis`.
 import os
 
 from datreant.treants import Treant
-from mdsynthesis import aggregators
-from mdsynthesis import persistence
+from mdsynthesis import limbs
+from mdsynthesis.backends import pytables
 from MDAnalysis import Universe
 
 
@@ -15,7 +15,7 @@ class Sim(Treant):
 
     """
     _treanttype = 'Sim'
-    _backends = {'pytables': ['.h5', persistence.SimFile]}
+    _backends = {'pytables': ['.h5', pytables.SimFile]}
 
     def __repr__(self):
         if not self._uname:
@@ -71,7 +71,7 @@ class Sim(Treant):
 
         """
         if not self._universes:
-            self._universes = aggregators.Universes(
+            self._universes = limbs.Universes(
                     self, self._backend, self._logger)
 
         return self._universes
@@ -90,7 +90,7 @@ class Sim(Treant):
         # universe is present thereafter
         if self.universe:
             if not self._selections:
-                self._selections = aggregators.Selections(
+                self._selections = limbs.Selections(
                         self, self._backend, self._logger)
 
             return self._selections

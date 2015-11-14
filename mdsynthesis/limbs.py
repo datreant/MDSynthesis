@@ -1,21 +1,21 @@
 """
-Aggregators are user interfaces for accessing stored data, as well as querying
+Limbs are user interfaces for accessing stored data, as well as querying
 the state of an object (data loaded, universe attached, etc.). They are also
 used to aggregate the functionality of higher level objects (such as Sim) in
 ways that are user-friendly.
 
-In short, an Aggregator is designed to be user friendly on its own, but are
+In short, an Limb is designed to be user friendly on its own, but are
 often used as components of a Treant.
 
 """
-from datreant.aggregators import Aggregator
+from datreant.limbs import Limb
 from MDAnalysis import Universe
 from MDAnalysis.core.AtomGroup import AtomGroup
 
 import mdsynthesis.filesystem
 
 
-class Universes(Aggregator):
+class Universes(Limb):
     """Interface to universes.
 
     """
@@ -313,7 +313,7 @@ class Universes(Aggregator):
         return topology[pathtype][0], trajectory[pathtype].tolist()
 
 
-class Selections(Aggregator):
+class Selections(Limb):
     """Selection manager for Sims.
 
     Selections are accessible as items using their handles. Each time they are

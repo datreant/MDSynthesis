@@ -6,7 +6,8 @@ Interface classes for state files and data files.
 import tables
 import numpy as np
 import os
-from datreant.persistence import File, TreantFile
+from datreant.backends.core import File
+from datreant.backends.pytables import TreantFile
 import mdsynthesis
 
 # max length in characters for all paths
