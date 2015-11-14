@@ -68,10 +68,10 @@ Reference: Group
 
 Reference: Members
 ==================
-The class :class:`mdsynthesis.core.aggregators.Members` is the interface used
+The class :class:`mdsynthesis.aggregators.Members` is the interface used
 by a **Group** to manage its members. It is not intended to be used on its own,
 but is shown here to give a detailed view of its methods.
 
-.. autoclass:: mdsynthesis.core.aggregators.Members
+.. autoclass:: mdsynthesis.aggregators.Members
     :members:
     :inherited-members:

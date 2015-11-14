@@ -154,10 +154,10 @@ file.
 
 Reference: Data
 ===============
-The class :class:`mdsynthesis.core.aggregators.Data` is the interface used
+The class :class:`mdsynthesis.aggregators.Data` is the interface used
 by Containers to access their stored datasets. It is not intended to be used
 on its own, but is shown here to give a detailed view of its methods.
 
-.. autoclass:: mdsynthesis.core.aggregators.Data
+.. autoclass:: mdsynthesis.aggregators.Data
     :members:
     :inherited-members:

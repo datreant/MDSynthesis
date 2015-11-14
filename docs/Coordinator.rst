@@ -9,7 +9,3 @@ report changes to their state files as they are made, giving the
 **Coordinator** a thin copy of all Containers it is made aware of.
 
 This feature is not yet implemented.
-
-.. .. autoclass:: mdsynthesis.Coordinator
-    :members:
-    :inherited-members:

@@ -50,20 +50,20 @@ Tags and categories are two elements of Containers that will be :doc:`queryable
 
 Reference: Tags
 ===============
-The class :class:`mdsynthesis.core.aggregators.Tags` is the interface used
+The class :class:`mdsynthesis.aggregators.Tags` is the interface used
 by Containers to access their tags. It is not intended to be used on its own,
 but is shown here to give a detailed view of its methods.
 
-.. autoclass:: mdsynthesis.core.aggregators.Tags
+.. autoclass:: mdsynthesis.aggregators.Tags
     :members:
     :inherited-members:
 
 Reference: Categories
 =====================
-The class :class:`mdsynthesis.core.aggregators.Categories` is the interface
+The class :class:`mdsynthesis.aggregators.Categories` is the interface
 used by Containers to access their categories. It is not intended to be used on
 its own, but is shown here to give a detailed view of its methods.
 
-.. autoclass:: mdsynthesis.core.aggregators.Categories
+.. autoclass:: mdsynthesis.aggregators.Categories
     :members:
     :inherited-members:
