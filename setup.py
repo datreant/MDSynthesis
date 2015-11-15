@@ -13,7 +13,10 @@ setup(name='mdsynthesis',
       version='0.6.0-dev',
       maintainer='David Dotson', 
       maintainer_email='dotsdl@gmail.com',
-      packages=['mdsynthesis', 'mdsynthesis.tests'],
+      packages=[
+          'mdsynthesis',
+          'mdsynthesis.backends',
+          'mdsynthesis.tests'],
       license='GPL 2',
       long_description=open('README.rst').read(),
       dependency_links=[
