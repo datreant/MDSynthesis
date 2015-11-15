@@ -17,7 +17,7 @@ setup(name='mdsynthesis',
       license='GPL 2',
       long_description=open('README.rst').read(),
       dependency_links=[
-      'http://github.com/dotsdl/datreant/tarball/develop#egg=datreant-0.6.0-dev',
+      'http://github.com/datreant/datreant/tarball/develop#egg=datreant-0.6.0-dev',
       ],
       install_requires=[
                 'numpy',
