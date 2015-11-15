@@ -70,14 +70,14 @@ edges and bugs. Issues and pull requests welcome!
     :scale: 100%
     :target: https://readthedocs.org/projects/mdsynthesis
 
-.. |build| image:: https://travis-ci.org/Becksteinlab/MDSynthesis.svg?branch=develop
+.. |build| image:: https://travis-ci.org/datreant/MDSynthesis.svg?branch=develop
     :alt: Build Status
-    :target: https://travis-ci.org/Becksteinlab/MDSynthesis
+    :target: https://travis-ci.org/datreant/MDSynthesis
 
-.. |cov| image:: http://codecov.io/github/Becksteinlab/MDSynthesis/coverage.svg?branch=develop
+.. |cov| image:: http://codecov.io/github/datreant/MDSynthesis/coverage.svg?branch=develop
     :alt: Code Coverage
     :scale: 100%
-    :target: http://codecov.io/github/Becksteinlab/MDSynthesis?branch=develop
+    :target: http://codecov.io/github/datreant/MDSynthesis?branch=develop
 
 .. |zen| image:: https://zenodo.org/badge/doi/10.5281/zenodo.18851.svg   
     :alt: Citation
