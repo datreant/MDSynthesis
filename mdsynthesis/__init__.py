@@ -19,7 +19,7 @@ science, letting the computer handle the lower-level logistical details.
 
 """
 # Bring some often used objects into the current namespace
-from mdsynthesis.treants import Sim
+from .treants import Sim
 from datreant import Treant, Group, register
 from datreant.collections import Bundle
 from datreant.manipulators import *

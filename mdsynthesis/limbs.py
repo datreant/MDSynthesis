@@ -8,6 +8,9 @@ In short, an Limb is designed to be user friendly on its own, but are
 often used as components of a Treant.
 
 """
+from six import string_types
+
+
 from datreant.limbs import Limb
 from MDAnalysis import Universe
 from MDAnalysis.core.AtomGroup import AtomGroup
@@ -368,7 +371,7 @@ class Selections(Limb):
         """Selection for the given handle and the active universe.
 
         """
-        if isinstance(selection, (basestring, AtomGroup)):
+        if isinstance(selection, (string_types, AtomGroup)):
             selection = [selection]
         self.add(handle, *selection)
 
@@ -406,7 +409,7 @@ class Selections(Limb):
         # Conversion function, leave strings alone,
         # turn AtomGroups into their indices
         def conv(x):
-            return x if isinstance(x, basestring) else x.indices
+            return x if isinstance(x, string_types) else x.indices
 
         self._backend.add_selection(
             self._treant._uname, handle, *map(conv, selection))
@@ -458,7 +461,7 @@ class Selections(Limb):
         # Selections might be either
         # - a list of strings
         # - a numpy array of indices
-        if isinstance(selstring[0], basestring):
+        if isinstance(selstring[0], string_types):
             return self._treant.universe.select_atoms(*selstring)
         else:
             return self._treant.universe.atoms[selstring]

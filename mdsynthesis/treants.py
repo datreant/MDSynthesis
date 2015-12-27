@@ -5,8 +5,8 @@ Basic Treant objects: the organizational units for :mod:`mdsynthesis`.
 import os
 
 from datreant.treants import Treant
-from mdsynthesis import limbs
-from mdsynthesis.backends import pytables
+from . import limbs
+from .backends import statefiles
 from MDAnalysis import Universe
 
 
@@ -15,7 +15,7 @@ class Sim(Treant):
 
     """
     _treanttype = 'Sim'
-    _backends = {'pytables': ['.h5', pytables.SimFile]}
+    _backendclass = statefiles.TreantFile
 
     def __repr__(self):
         if not self._uname:
