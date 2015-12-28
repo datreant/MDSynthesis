@@ -51,7 +51,7 @@ class Universes(Limb):
             out = out + majsep * seplength + '\n'
             for universe in universes:
                 out = out + "'{}'".format(universe)
-                if self._treant._backend.get_default() == universe:
+                if self._backend.get_default() == universe:
                     out = out + ' (default)'
                 if self._treant._uname == universe:
                     out = out + ' (active)'
@@ -59,10 +59,10 @@ class Universes(Limb):
         return out
 
     def __contains__(self, item):
-        return (item in self._treant._backend.list_universes())
+        return (item in self._backend.list_universes())
 
     def __iter__(self):
-        return self._treant._backend.list_universes().__iter__()
+        return self._backend.list_universes().__iter__()
 
     def __getitem__(self, handle):
         """Attach universe and return a reference to it.
@@ -113,7 +113,7 @@ class Universes(Limb):
             else:
                 outtraj.append(traj)
 
-        self._treant._backend.add_universe(handle, topology, *outtraj)
+        self._backend.add_universe(handle, topology, *outtraj)
 
         if not self.default():
             self.default(handle)
@@ -129,7 +129,7 @@ class Universes(Limb):
         """
         for item in handle:
             try:
-                self._treant._backend.del_universe(item)
+                self._backend.del_universe(item)
             except KeyError:
                 raise KeyError(
                         "No such universe '{}';".format(handle) +
@@ -140,7 +140,7 @@ class Universes(Limb):
                 self._treant._uname = None
 
             if self.default() == item:
-                self._treant._backend.update_default()
+                self._backend.update_default()
 
     def rename(self, handle, newname):
         """Rename a universe definition.
@@ -152,7 +152,7 @@ class Universes(Limb):
                 new name of universe
         """
         try:
-            self._treant._backend.rename_universe(handle, newname)
+            self._backend.rename_universe(handle, newname)
         except KeyError:
             raise KeyError(
                     "No such universe '{}';".format(handle) +
@@ -166,7 +166,7 @@ class Universes(Limb):
             self._treant._uname = newname
 
             if self.default() == handle:
-                self._treant._backend.update_default(newname)
+                self._backend.update_default(newname)
 
     def keys(self):
         """Get handles for all universe definitions as a list.
@@ -175,7 +175,7 @@ class Universes(Limb):
             *handles*
                 list of all universe handles
         """
-        return self._treant._backend.list_universes()
+        return self._backend.list_universes()
 
     def activate(self, handle=None):
         """Make the selected universe active.
@@ -198,7 +198,7 @@ class Universes(Limb):
                 universe selected
         """
         if not handle:
-            handle = self._treant._backend.get_default()
+            handle = self._backend.get_default()
 
         if handle:
             uh = filesystem.Universehound(self, handle)
@@ -214,11 +214,9 @@ class Universes(Limb):
             # path variants for each file
             # if read-only, move on
             try:
-                self._treant._backend.add_universe(handle,
-                                                   topology,
-                                                   *trajectory)
+                self._backend.add_universe(handle, topology, *trajectory)
             except OSError:
-                self._treant._logger.info(
+                self._logger.info(
                     "Cannot update paths for universe '{}';".format(handle) +
                     " state file is read-only.")
         else:
@@ -251,7 +249,7 @@ class Universes(Limb):
         """Apply resnum definition to active universe.
 
         """
-        resnums = self._treant._backend.get_resnums(self._treant._uname)
+        resnums = self._backend.get_resnums(self._treant._uname)
 
         if resnums:
             self._treant._universe.residues.set_resnums(np.array(resnums))
@@ -274,9 +272,9 @@ class Universes(Limb):
                 atom index order; giving ``None`` will delete resnum definition
         """
         if resnums is None:
-            self._treant._backend.del_resnums(handle)
+            self._backend.del_resnums(handle)
 
-        self._treant._backend.update_resnums(handle, resnums.tolist())
+        self._backend.update_resnums(handle, resnums.tolist())
 
         if handle == self._treant._uname:
             self._apply_resnums()
@@ -299,9 +297,9 @@ class Universes(Limb):
                 handle of the default universe
         """
         if handle:
-            self._treant._backend.update_default(handle)
+            self._backend.update_default(handle)
 
-        return self._treant._backend.get_default()
+        return self._backend.get_default()
 
     def define(self, handle, pathtype='abs'):
         """Get the stored path to the topology and trajectory used for the
@@ -325,7 +323,7 @@ class Universes(Limb):
             *trajectory*
                 list of paths to trajectory files
         """
-        topology, trajectory = self._treant._backend.get_universe(handle)
+        topology, trajectory = self._backend.get_universe(handle)
 
         return topology[pathtype], trajectory[pathtype]
 
@@ -392,7 +390,7 @@ class Selections(Limb):
         self.add(handle, *selection)
 
     def __iter__(self):
-        return self._treant._backend.list_selections(
+        return self._backend.list_selections(
                 self._treant._uname).__iter__()
 
     def __delitem__(self, handle):
@@ -400,7 +398,7 @@ class Selections(Limb):
 
         """
         try:
-            self._treant._backend.del_selection(self._treant._uname, handle)
+            self._backend.del_selection(self._treant._uname, handle)
         except KeyError:
             raise KeyError(
                     "No such selection '{}'; add it first.".format(handle))
@@ -427,7 +425,7 @@ class Selections(Limb):
         def conv(x):
             return x if isinstance(x, string_types) else x.indices
 
-        self._treant._backend.add_selection(
+        self._backend.add_selection(
             self._treant._uname, handle, *map(conv, selection))
 
     def remove(self, *handle):
@@ -441,7 +439,7 @@ class Selections(Limb):
         """
         for item in handle:
             try:
-                self._treant._backend.del_selection(self._treant._uname, item)
+                self._backend.del_selection(self._treant._uname, item)
             except KeyError:
                 raise KeyError(
                         "No such selection '{}';".format(item) +
@@ -452,7 +450,7 @@ class Selections(Limb):
 
         """
         if self._treant._uname:
-            return self._treant._backend.list_selections(self._treant._uname)
+            return self._backend.list_selections(self._treant._uname)
 
     def asAtomGroup(self, handle):
         """Get AtomGroup from active universe from the given named selection.
@@ -468,7 +466,7 @@ class Selections(Limb):
                 the named selection as an AtomGroup of the active universe
         """
         try:
-            sel = self._treant._backend.get_selection(
+            sel = self._backend.get_selection(
                     self._treant._uname, handle)
         except KeyError:
             raise KeyError(
@@ -507,7 +505,7 @@ class Selections(Limb):
                 list of strings defining the atom selection
         """
         try:
-            selstring = self._treant._backend.get_selection(
+            selstring = self._backend.get_selection(
                             self._treant._uname, handle)
         except KeyError:
             raise KeyError(
@@ -524,12 +522,12 @@ class Selections(Limb):
         """
         if self._treant._uname:
             try:
-                selections = self._treant._backend.list_selections(universe)
+                selections = self._backend.list_selections(universe)
             except KeyError:
                 raise KeyError("No such universe '{}';".format(universe) +
                                " cannot copy selections.")
 
             for sel in selections:
-                seldef = self._treant._backend.get_selection(universe, sel)
-                self._treant._backend.add_selection(
+                seldef = self._backend.get_selection(universe, sel)
+                self._backend.add_selection(
                     self._treant._uname, sel, *seldef)

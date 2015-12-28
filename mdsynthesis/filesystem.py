@@ -74,7 +74,7 @@ class Universehound(object):
                 a list indicates that a particular file could not
                 be found
         """
-        top, traj = self.caller._treant._backend.get_universe(self.uname)
+        top, traj = self.caller._backend.get_universe(self.uname)
         outpaths = dict()
 
         def check(paths):
@@ -89,7 +89,7 @@ class Universehound(object):
                 out['abs'] = paths['abs']
 
             candidate = os.path.join(
-                        self.caller._treant._backend.get_location(),
+                        self.caller._backend.get_location(),
                         paths['rel'])
             if os.path.exists(candidate):
                 out['rel'] = candidate
