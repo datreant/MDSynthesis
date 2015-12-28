@@ -12,6 +12,7 @@ import json
 from functools import wraps
 
 from six import string_types
+import numpy as np
 
 import datreant
 from datreant.backends.core import FileSerial
@@ -25,6 +26,7 @@ class SimFile(TreantFile):
         super(SimFile, self)._init_record()
         self._record['mds'] = dict()
         self._record['mds']['universes'] = dict()
+        self._record['mds']['default'] = None
 
     @FileSerial._read
     @FileSerial._pull
@@ -156,7 +158,7 @@ class SimFile(TreantFile):
 
         """
         # if universe schema already exists, don't overwrite it
-        if not universe in self._record['mds']['universes']:
+        if universe not in self._record['mds']['universes']:
             self._record['mds']['universes'][universe] = dict()
 
         udict = self._record['mds']['universes'][universe]
@@ -173,7 +175,16 @@ class SimFile(TreantFile):
                      os.path.relpath(segment, self.get_location())])
 
         # add selections schema
-        udict['sels'] = dict()
+        if 'sels' not in udict:
+            udict['sels'] = dict()
+
+        # add resnums schema
+        if 'resnums' not in udict:
+            udict['resnums'] = None
+
+        # if no default universe, make this default
+        if not self._record['mds']['default']:
+            self._record['mds']['default'] = universe
 
     @FileSerial._write
     @FileSerial._pull_push
@@ -199,6 +210,10 @@ class SimFile(TreantFile):
             *newname*
                 new name of universe
         """
+        if newname in self._record['mds']['universes']:
+            raise ValueError(
+                    "Universe '{}' already exixts;".format(newname) +
+                    " remove it first")
         udicts = self._record['mds']['universes']
         udicts[newname] = udicts.pop(universe)
 
@@ -232,7 +247,9 @@ class SimFile(TreantFile):
 
         :Returns:
             *selection*
-                list of the selection strings making up the atom selection
+                list of the selection strings making up the atom selection; may
+                also be a list of atom indices
+
         """
         selections = self._record['mds']['universes'][universe]['sels']
 
@@ -266,7 +283,7 @@ class SimFile(TreantFile):
                 outsel.append(sel.tolist())
             elif isinstance(sel, string_types):
                 outsel.append(sel)
-        
+
         self._record['mds']['universes'][universe]['sels'][handle] = outsel
 
     @FileSerial._write
@@ -282,3 +299,60 @@ class SimFile(TreantFile):
 
         """
         del self._record['mds']['universes'][universe]['sels'][handle]
+
+    @FileSerial._write
+    @FileSerial._pull_push
+    def update_resnums(self, universe, resnums):
+        """Update resnum definition for the given universe.
+
+        Resnums are useful for referring to residues by their canonical resid,
+        for instance that stored in the PDB. By giving a resnum definition
+        for the universe, this definition can be applied to the universe
+        on activation.
+
+        Will overwrite existing definition if it exists.
+
+        :Arguments:
+            *universe*
+                name of universe to associate resnums with
+            *resnums*
+                list giving the resnum for each atom in the topology, in index
+                order
+        """
+        try:
+            udict = self._record['mds']['universes'][universe]
+        except KeyError:
+            self.logger.info(
+                "Universe definition '{}'".format(universe) +
+                " does not exist. Add it first.")
+            return
+
+        # add resnums
+        udict['resnums'] = resnums
+
+    @FileSerial._read
+    @FileSerial._pull
+    def get_resnums(self, universe):
+        """Get the resnum definition for the given universe.
+
+        :Arguments:
+            *universe*
+                name of universe the resnum definition applies to
+
+        :Returns:
+            *resnums*
+                list of the resnums for each atom in topology; None if
+                no resnums defined
+        """
+        return self._record['mds']['universes'][universe]['resnums']
+
+    @FileSerial._write
+    @FileSerial._pull_push
+    def del_resnums(self, universe):
+        """Delete resnum definition from specified universe.
+
+        :Arguments:
+            *universe*
+                name of universe to remove resnum definition from
+        """
+        self._record['mds']['universes'][universe]['resnums'] = None

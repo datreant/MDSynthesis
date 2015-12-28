@@ -15,7 +15,7 @@ class Sim(Treant):
 
     """
     _treanttype = 'Sim'
-    _backendclass = statefiles.TreantFile
+    _backendclass = statefiles.SimFile
 
     def __repr__(self):
         if not self._uname:
@@ -71,8 +71,7 @@ class Sim(Treant):
 
         """
         if not self._universes:
-            self._universes = limbs.Universes(
-                    self, self._backend, self._logger)
+            self._universes = limbs.Universes(self)
 
         return self._universes
 
@@ -90,16 +89,15 @@ class Sim(Treant):
         # universe is present thereafter
         if self.universe:
             if not self._selections:
-                self._selections = limbs.Selections(
-                        self, self._backend, self._logger)
+                self._selections = limbs.Selections(self)
 
             return self._selections
 
-    def _placeholders(self):
-        """Necessary placeholders for aggregator instances.
+    def _init_hook(self):
+        """Necessary placeholders.
 
         """
-        super(Sim, self)._placeholders()
+        super(Sim, self)._init_hook()
 
         self._universes = None
         self._selections = None
