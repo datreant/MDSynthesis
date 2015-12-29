@@ -316,7 +316,7 @@ class SimFile(TreantFile):
             *universe*
                 name of universe to associate resnums with
             *resnums*
-                list giving the resnum for each atom in the topology, in index
+                list giving the resnum for each residue in the topology, in index
                 order
         """
         try:
