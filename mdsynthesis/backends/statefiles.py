@@ -316,8 +316,8 @@ class SimFile(TreantFile):
             *universe*
                 name of universe to associate resnums with
             *resnums*
-                list giving the resnum for each residue in the topology, in index
-                order
+                list giving the resnum for each residue in the topology, in
+                index order
         """
         try:
             udict = self._record['mds']['universes'][universe]
