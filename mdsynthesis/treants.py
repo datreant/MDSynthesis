@@ -17,6 +17,44 @@ class Sim(Treant):
     _treanttype = 'Sim'
     _backendclass = statefiles.SimFile
 
+    def __init__(self, treant, new=False, categories=None, tags=None):
+        """Generate a new or regenerate an existing (on disk) Treant object.
+
+        :Required arguments:
+            *treant*
+                base directory of a new or existing Treant; will regenerate
+                a Treant if a state file is found, but will genereate a new
+                one otherwise
+
+                if multiple Treant state files are in the given directory,
+                will raise :exception:`MultipleTreantsError`; specify
+                the full path to the desired state file to regenerate the
+                desired Treant in this case
+
+                use the *new* keyword to force generation of a new Treant
+                at the given path
+
+        :Optional arguments:
+            *new*
+                generate a new Treant even if one already exists at the given
+                location *treant*
+            *categories*
+                dictionary with user-defined keys and values; used to give
+                Treants distinguishing characteristics
+            *tags*
+                list with user-defined values; like categories, but useful for
+                adding many distinguishing descriptors
+        """
+        super(Sim, self).__init__(treant,
+                                  new=new,
+                                  categories=categories,
+                                  tags=tags)
+
+        self._universes = None
+        self._selections = None
+        self._universe = None     # universe 'dock'
+        self._uname = None        # attached universe name
+
     def __repr__(self):
         if not self._uname:
             out = "<Sim: '{}'>".format(self.name)
@@ -92,14 +130,3 @@ class Sim(Treant):
                 self._selections = limbs.Selections(self)
 
             return self._selections
-
-    def _init_hook(self):
-        """Necessary placeholders.
-
-        """
-        super(Sim, self)._init_hook()
-
-        self._universes = None
-        self._selections = None
-        self._universe = None     # universe 'dock'
-        self._uname = None        # attached universe name

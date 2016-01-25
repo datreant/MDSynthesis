@@ -14,7 +14,7 @@ from functools import wraps
 from six import string_types
 import numpy as np
 
-from datreant.core..backends.core import FileSerial
+from datreant.core.backends.core import FileSerial
 from datreant.core.backends.statefiles import TreantFile
 
 
@@ -28,7 +28,6 @@ class SimFile(TreantFile):
         self._record['mds']['default'] = None
 
     @FileSerial._read
-    @FileSerial._pull
     def get_mds_version(self):
         """Get Sim mdsynthesis version.
 
@@ -41,7 +40,6 @@ class SimFile(TreantFile):
 
     # TODO: need a proper schema update mechanism
     @FileSerial._write
-    @FileSerial._pull_push
     def update_mds_schema(self):
         """Update mdsynthesis-specific schema of file.
 
@@ -57,7 +55,6 @@ class SimFile(TreantFile):
         return version
 
     @FileSerial._write
-    @FileSerial._pull_push
     def update_mds_version(self, version):
         """Update mdsynthesis version of Sim.
 
@@ -68,7 +65,6 @@ class SimFile(TreantFile):
         self._record['mds']['version'] = version
 
     @FileSerial._write
-    @FileSerial._pull_push
     def update_default(self, universe=None):
         """Mark the given universe as the default.
 
@@ -80,7 +76,6 @@ class SimFile(TreantFile):
         self._record['mds']['default'] = universe
 
     @FileSerial._read
-    @FileSerial._pull
     def get_default(self):
         """Get default universe.
 
@@ -93,7 +88,6 @@ class SimFile(TreantFile):
         return self._record['mds']['default']
 
     @FileSerial._read
-    @FileSerial._pull
     def list_universes(self):
         """List universe names.
 
@@ -105,7 +99,6 @@ class SimFile(TreantFile):
         return self._record['mds']['universes'].keys()
 
     @FileSerial._read
-    @FileSerial._pull
     def get_universe(self, universe):
         """Get topology and trajectory paths for the desired universe.
 
@@ -136,7 +129,6 @@ class SimFile(TreantFile):
         return outtop, outtraj
 
     @FileSerial._write
-    @FileSerial._pull_push
     def add_universe(self, universe, topology, *trajectory):
         """Add a universe definition to the Sim object.
 
@@ -186,7 +178,6 @@ class SimFile(TreantFile):
             self._record['mds']['default'] = universe
 
     @FileSerial._write
-    @FileSerial._pull_push
     def del_universe(self, universe):
         """Delete a universe definition.
 
@@ -199,7 +190,6 @@ class SimFile(TreantFile):
         del self._record['mds']['universes'][universe]
 
     @FileSerial._write
-    @FileSerial._pull_push
     def rename_universe(self, universe, newname):
         """Rename a universe definition.
 
@@ -217,7 +207,6 @@ class SimFile(TreantFile):
         udicts[newname] = udicts.pop(universe)
 
     @FileSerial._read
-    @FileSerial._pull
     def list_selections(self, universe):
         """List selection names.
 
@@ -234,7 +223,6 @@ class SimFile(TreantFile):
         return self._record['mds']['universes'][universe]['sels'].keys()
 
     @FileSerial._read
-    @FileSerial._pull
     def get_selection(self, universe, handle):
         """Get a stored atom selection for the given universe.
 
@@ -255,7 +243,6 @@ class SimFile(TreantFile):
         return selections[handle]
 
     @FileSerial._write
-    @FileSerial._pull_push
     def add_selection(self, universe, handle, *selection):
         """Add an atom selection definition for the named Universe definition.
 
@@ -286,7 +273,6 @@ class SimFile(TreantFile):
         self._record['mds']['universes'][universe]['sels'][handle] = outsel
 
     @FileSerial._write
-    @FileSerial._pull_push
     def del_selection(self, universe, handle):
         """Delete an atom selection from the specified universe.
 
@@ -300,7 +286,6 @@ class SimFile(TreantFile):
         del self._record['mds']['universes'][universe]['sels'][handle]
 
     @FileSerial._write
-    @FileSerial._pull_push
     def update_resnums(self, universe, resnums):
         """Update resnum definition for the given universe.
 
@@ -330,7 +315,6 @@ class SimFile(TreantFile):
         udict['resnums'] = resnums
 
     @FileSerial._read
-    @FileSerial._pull
     def get_resnums(self, universe):
         """Get the resnum definition for the given universe.
 
@@ -346,7 +330,6 @@ class SimFile(TreantFile):
         return self._record['mds']['universes'][universe]['resnums']
 
     @FileSerial._write
-    @FileSerial._pull_push
     def del_resnums(self, universe):
         """Delete resnum definition from specified universe.
 

@@ -27,4 +27,3 @@ from .treants import Sim
 
 __all__ = ['Sim', 'Group', 'Bundle']
 __version__ = "0.6.0"  # NOTE: keep in sync with RELEASE in setup.py
-
