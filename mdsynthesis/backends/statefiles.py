@@ -14,9 +14,8 @@ from functools import wraps
 from six import string_types
 import numpy as np
 
-import datreant
-from datreant.backends.core import FileSerial
-from datreant.backends.statefiles import TreantFile
+from datreant.core..backends.core import FileSerial
+from datreant.core.backends.statefiles import TreantFile
 
 
 class SimFile(TreantFile):

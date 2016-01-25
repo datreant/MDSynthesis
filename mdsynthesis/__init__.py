@@ -19,15 +19,12 @@ science, letting the computer handle the lower-level logistical details.
 
 """
 # Bring some often used objects into the current namespace
-import datreant
+import datreant.core
 import datreant.data
-from datreant import Treant, Group, register
-from datreant.collections import Bundle
-from datreant.manipulators import *
+from datreant.core import Treant, Group, Bundle
 
 from .treants import Sim
 
-__all__ = ['Sim', 'Group', 'Coordinator', 'Bundle']
-__version__ = "0.5.1"  # NOTE: keep in sync with RELEASE in setup.py
+__all__ = ['Sim', 'Group', 'Bundle']
+__version__ = "0.6.0"  # NOTE: keep in sync with RELEASE in setup.py
 
-register(Sim)

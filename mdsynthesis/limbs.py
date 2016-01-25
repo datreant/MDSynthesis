@@ -11,7 +11,7 @@ often used as components of a Treant.
 from six import string_types
 import numpy as np
 
-from datreant.limbs import Limb
+from datreant.core.limbs import Limb
 from MDAnalysis import Universe
 from MDAnalysis.core.AtomGroup import AtomGroup
 

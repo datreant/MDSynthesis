@@ -4,7 +4,7 @@ Basic Treant objects: the organizational units for :mod:`mdsynthesis`.
 """
 import os
 
-from datreant.treants import Treant
+from datreant.core.treants import Treant
 from . import limbs
 from .backends import statefiles
 from MDAnalysis import Universe
