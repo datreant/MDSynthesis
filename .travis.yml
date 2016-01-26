@@ -21,7 +21,7 @@ install:
   - pip install pytest-cov
   - pip install pytest-pep8
   - pip install numpy numexpr Cython
-  - python setup.py install
+  - pip install --process-dependency-links -e .
 
 # run tests
 script: 
