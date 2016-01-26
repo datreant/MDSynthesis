@@ -21,6 +21,7 @@ install:
   - pip install pytest-cov
   - pip install pytest-pep8
   - pip install numpy numexpr Cython
+  - pip install MDAnalysisTests
   - pip install --process-dependency-links -e .
 
 # run tests
