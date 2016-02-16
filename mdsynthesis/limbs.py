@@ -8,17 +8,32 @@ In short, an Limb is designed to be user friendly on its own, but are
 often used as components of a Treant.
 
 """
-from datreant.limbs import Limb
+from six import string_types
+import numpy as np
+
+from datreant.core.limbs import Limb
 from MDAnalysis import Universe
 from MDAnalysis.core.AtomGroup import AtomGroup
 
-import mdsynthesis.filesystem
+from . import filesystem
 
 
 class Universes(Limb):
-    """Interface to universes.
+    """Manage the defined universes of the Sim.
+
+    Universes are interfaces to raw simulation data. The Sim can store
+    multiple universe definitions corresponding to different versions
+    of the same simulation output (e.g. post-processed trajectories derived
+    from the same raw trajectory). The Sim has at most one universe
+    definition that is "active" at one time, with stored selections for
+    this universe directly available via ``Sim.selections``.
+
+    The Sim can also store a preference for a "default" universe, which is
+    activated on a call to ``Sim.universe`` when no other universe is
+    active.
 
     """
+    _name = 'universes'
 
     def __repr__(self):
         return "<Universes({})>".format(self.keys())
@@ -186,9 +201,9 @@ class Universes(Limb):
             handle = self._backend.get_default()
 
         if handle:
-            uh = mdsynthesis.filesystem.Universehound(self, handle)
+            uh = filesystem.Universehound(self, handle)
             paths = uh.fetch()
-            topology = paths['top'][0]
+            topology = paths['top']
             trajectory = paths['traj']
 
             self._treant._universe = Universe(topology, *trajectory)
@@ -237,7 +252,7 @@ class Universes(Limb):
         resnums = self._backend.get_resnums(self._treant._uname)
 
         if resnums:
-            self._treant._universe.residues.set_resnums(resnums)
+            self._treant._universe.residues.set_resnums(np.array(resnums))
 
     def resnums(self, handle, resnums):
         """Define resnums for the given universe.
@@ -259,7 +274,7 @@ class Universes(Limb):
         if resnums is None:
             self._backend.del_resnums(handle)
 
-        self._backend.update_resnums(handle, resnums)
+        self._backend.update_resnums(handle, resnums.tolist())
 
         if handle == self._treant._uname:
             self._apply_resnums()
@@ -286,7 +301,7 @@ class Universes(Limb):
 
         return self._backend.get_default()
 
-    def define(self, handle, pathtype='abspath'):
+    def define(self, handle, pathtype='abs'):
         """Get the stored path to the topology and trajectory used for the
         specified universe.
 
@@ -299,8 +314,8 @@ class Universes(Limb):
 
         :Keywords:
             *pathtype*
-                type of path to return; 'abspath' gives an absolute path,
-                'relCont' gives a path relative to the Sim's state file
+                type of path to return; 'abs' gives an absolute path,
+                'rel' gives a path relative to the Sim's state file
 
         :Returns:
             *topology*
@@ -310,17 +325,19 @@ class Universes(Limb):
         """
         topology, trajectory = self._backend.get_universe(handle)
 
-        return topology[pathtype][0], trajectory[pathtype].tolist()
+        return topology[pathtype], trajectory[pathtype]
 
 
 class Selections(Limb):
-    """Selection manager for Sims.
+    """Stored atom selections for the active universe.
 
-    Selections are accessible as items using their handles. Each time they are
-    called, they are regenerated from the universe that is currently active. In
-    this way, changes in the universe topology are reflected in the selections.
+    Useful atom selections can be stored for the active universe and
+    recalled later. Selections are stored separately for each defined
+    universe, since the same selection may require a different selection
+    string for different universes.
 
     """
+    _name = 'selections'
 
     def __repr__(self):
         return "<Selections({})>".format(
@@ -368,7 +385,7 @@ class Selections(Limb):
         """Selection for the given handle and the active universe.
 
         """
-        if isinstance(selection, (basestring, AtomGroup)):
+        if isinstance(selection, (string_types, AtomGroup)):
             selection = [selection]
         self.add(handle, *selection)
 
@@ -406,7 +423,7 @@ class Selections(Limb):
         # Conversion function, leave strings alone,
         # turn AtomGroups into their indices
         def conv(x):
-            return x if isinstance(x, basestring) else x.indices
+            return x if isinstance(x, string_types) else x.indices
 
         self._backend.add_selection(
             self._treant._uname, handle, *map(conv, selection))
@@ -449,19 +466,30 @@ class Selections(Limb):
                 the named selection as an AtomGroup of the active universe
         """
         try:
-            selstring = self._backend.get_selection(
-                self._treant._uname, handle)
+            sel = self._backend.get_selection(
+                    self._treant._uname, handle)
         except KeyError:
             raise KeyError(
                     "No such selection '{}'; add it first.".format(handle))
 
         # Selections might be either
         # - a list of strings
-        # - a numpy array of indices
-        if isinstance(selstring[0], basestring):
-            return self._treant.universe.select_atoms(*selstring)
-        else:
-            return self._treant.universe.atoms[selstring]
+        # - a list of indices
+
+        ag = None
+        for item in sel:
+            if isinstance(item, string_types):
+                if ag:
+                    ag += self._treant.universe.select_atoms(item)
+                else:
+                    ag = self._treant.universe.select_atoms(item)
+            else:
+                if ag:
+                    ag += self._treant.universe.atoms[item]
+                else:
+                    ag = self._treant.universe.atoms[item]
+
+        return ag
 
     def define(self, handle):
         """Get selection definition for given handle and the active universe.

@@ -21,10 +21,8 @@ install:
   - pip install pytest-cov
   - pip install pytest-pep8
   - pip install numpy numexpr Cython
-  - pip install tables
-  - pip install pandas h5py MDAnalysis MDAnalysisTests
-  - pip install scandir PyYAML
-  - python setup.py install
+  - pip install MDAnalysisTests
+  - pip install --process-dependency-links -e .
 
 # run tests
 script: 

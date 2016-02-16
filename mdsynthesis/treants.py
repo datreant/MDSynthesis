@@ -4,9 +4,9 @@ Basic Treant objects: the organizational units for :mod:`mdsynthesis`.
 """
 import os
 
-from datreant.treants import Treant
-from mdsynthesis import limbs
-from mdsynthesis.backends import pytables
+from datreant.core.treants import Treant
+from . import limbs
+from .backends import statefiles
 from MDAnalysis import Universe
 
 
@@ -15,7 +15,45 @@ class Sim(Treant):
 
     """
     _treanttype = 'Sim'
-    _backends = {'pytables': ['.h5', pytables.SimFile]}
+    _backendclass = statefiles.SimFile
+
+    def __init__(self, treant, new=False, categories=None, tags=None):
+        """Generate a new or regenerate an existing (on disk) Treant object.
+
+        :Required arguments:
+            *treant*
+                base directory of a new or existing Treant; will regenerate
+                a Treant if a state file is found, but will genereate a new
+                one otherwise
+
+                if multiple Treant state files are in the given directory,
+                will raise :exception:`MultipleTreantsError`; specify
+                the full path to the desired state file to regenerate the
+                desired Treant in this case
+
+                use the *new* keyword to force generation of a new Treant
+                at the given path
+
+        :Optional arguments:
+            *new*
+                generate a new Treant even if one already exists at the given
+                location *treant*
+            *categories*
+                dictionary with user-defined keys and values; used to give
+                Treants distinguishing characteristics
+            *tags*
+                list with user-defined values; like categories, but useful for
+                adding many distinguishing descriptors
+        """
+        super(Sim, self).__init__(treant,
+                                  new=new,
+                                  categories=categories,
+                                  tags=tags)
+
+        self._universes = None
+        self._selections = None
+        self._universe = None     # universe 'dock'
+        self._uname = None        # attached universe name
 
     def __repr__(self):
         if not self._uname:
@@ -71,8 +109,7 @@ class Sim(Treant):
 
         """
         if not self._universes:
-            self._universes = limbs.Universes(
-                    self, self._backend, self._logger)
+            self._universes = limbs.Universes(self)
 
         return self._universes
 
@@ -90,18 +127,6 @@ class Sim(Treant):
         # universe is present thereafter
         if self.universe:
             if not self._selections:
-                self._selections = limbs.Selections(
-                        self, self._backend, self._logger)
+                self._selections = limbs.Selections(self)
 
             return self._selections
-
-    def _placeholders(self):
-        """Necessary placeholders for aggregator instances.
-
-        """
-        super(Sim, self)._placeholders()
-
-        self._universes = None
-        self._selections = None
-        self._universe = None     # universe 'dock'
-        self._uname = None        # attached universe name

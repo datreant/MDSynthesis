@@ -19,13 +19,11 @@ science, letting the computer handle the lower-level logistical details.
 
 """
 # Bring some often used objects into the current namespace
-from mdsynthesis.treants import Sim
-from datreant import Treant, Group, register
-from datreant.collections import Bundle
-from datreant.manipulators import *
-import datreant
+import datreant.core
+from datreant.core import Treant, Group, Bundle
 
-__all__ = ['Sim', 'Group', 'Coordinator', 'Bundle']
-__version__ = "0.5.1"  # NOTE: keep in sync with RELEASE in setup.py
+from .treants import Sim
+from . import attach
 
-register(Sim)
+__all__ = ['Sim', 'Group', 'Bundle']
+__version__ = "0.6.0"  # NOTE: keep in sync with RELEASE in setup.py

@@ -9,7 +9,7 @@ import pytest
 import os
 import shutil
 import py
-from datreant.tests.test_treants import TestTreant
+from datreant.core.tests.test_treants import TestTreant
 
 import MDAnalysis
 from MDAnalysisTests.datafiles import GRO, XTC
@@ -94,7 +94,7 @@ class TestSim(TestTreant):
 
             treant.universes.remove('megaman')
 
-            assert treant.universes.default() == None
+            assert treant.universes.default() is None
 
         def test_set_resnums(self, treant):
             """Test that we can add resnums to a universe."""

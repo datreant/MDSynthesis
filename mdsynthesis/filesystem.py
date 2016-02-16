@@ -5,7 +5,7 @@ Functions and classes for finding Treants in the filesystem.
 import os
 import glob
 
-from datreant.treants import Treant, Group
+from datreant.core import Treant, Group
 
 
 class Universehound(object):
@@ -52,7 +52,7 @@ class Universehound(object):
         # search last-known locations
         results = self._check_basedirs()
 
-        if (None in results['top']) or (None in results['traj']):
+        if (results['top'] is None) or (None in results['traj']):
             raise IOError("At least one file for" +
                           " universe '{}' could not".format(self.uname) +
                           " be found from stored absolute and relative" +
@@ -74,41 +74,53 @@ class Universehound(object):
                 a list indicates that a particular file could not
                 be found
         """
-        paths = self.caller._backend.get_universe(self.uname)
-        paths = {'top': paths[0], 'traj': paths[1]}
-
-        # initialize output list with None
+        top, traj = self.caller._backend.get_universe(self.uname)
         outpaths = dict()
 
-        # iterate through topology and trajectory files
-        for filetype in paths:
-            outpaths[filetype] = [None]*len(paths[filetype])
+        def check(paths):
 
-            for i, entry in enumerate(paths[filetype]):
+            out = {'abs': None,
+                   'rel': None}
 
-                # check absolute path first
-                if 'abspath' in entry.dtype.names:
-                    if os.path.exists(entry['abspath']):
-                        outpaths[filetype][i] = entry['abspath']
-                if 'relCont' in entry.dtype.names:
-                    candidate = os.path.join(
-                        self.caller._backend.get_location(), entry['relCont'])
+            chosen = None
 
-                    # if both abspath and relCont exist, check that they point
-                    # to the same file. if so, accept; if not, choose abspath
-                    # and log a warning
-                    if os.path.exists(candidate):
-                        if outpaths[filetype][i]:
-                            if not os.path.samefile(candidate,
-                                                    outpaths[filetype][i]):
-                                outpaths[filetype][i] = entry['abspath']
-                                raise IOError(
-                                    "Absolute and relative paths for a file" +
-                                    " in universe '{}'".format(self.uname) +
-                                    " point to different files; update paths" +
-                                    " by re-adding this universe")
-                        # otherwise, accept relCont
-                        else:
-                            outpaths[filetype][i] = candidate
+            # check absolute path first
+            if os.path.exists(paths['abs']):
+                out['abs'] = paths['abs']
+
+            candidate = os.path.join(
+                        self.caller._backend.get_location(),
+                        paths['rel'])
+            if os.path.exists(candidate):
+                out['rel'] = candidate
+
+            # if both abs and rel exist, check that they point to the same
+            # file. if so, accept; if not, throw exception
+            if ((out['abs'] and out['rel']) and not
+                    os.path.samefile(out['abs'], out['rel'])):
+                raise IOError("Absolute and relative paths for file" +
+                              " of universe '{}'".format(self.uname) +
+                              " point to different files; update paths" +
+                              " by re-adding this universe")
+            elif out['rel']:
+                # otherwise, accept rel
+                chosen = os.path.abspath(out['rel'])
+            elif out['abs']:
+                # if rel path gives no file, accept abs
+                chosen = out['abs']
+            else:
+                # if none of the paths resolve, raise exception
+                raise IOError(
+                        "Topology file not found for universe '{}'".format(
+                            self.uname))
+
+            return chosen
+
+        outpaths['top'] = check(top)
+
+        outpaths['traj'] = [None]*len(traj['abs'])
+        for i, entry in enumerate(traj['abs']):
+            outpaths['traj'][i] = check({'abs': traj['abs'][i],
+                                         'rel': traj['rel'][i]})
 
         return outpaths
