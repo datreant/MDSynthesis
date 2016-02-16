@@ -82,7 +82,7 @@ class Sim(Treant):
         """
         # TODO: include check for changes to universe definition, not just
         # definition absence
-        if self._uname in self._backend.list_universes():
+        if self._uname in self.universes:
             return self._universe
         elif not self._universe:
             self.universes.activate()

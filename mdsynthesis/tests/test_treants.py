@@ -84,9 +84,9 @@ class TestSim(TestTreant):
             treant.universes.deactivate()
 
             treant.universes.add('megaman', GRO)
-            treant.universes.default('megaman')
+            treant.universes.default = 'megaman'
 
-            assert treant.universes.default() == 'megaman'
+            assert treant.universes.default == 'megaman'
 
             assert treant.universe.filename == GRO
             assert treant.universe.trajectory.filename == GRO
@@ -94,7 +94,7 @@ class TestSim(TestTreant):
 
             treant.universes.remove('megaman')
 
-            assert treant.universes.default() is None
+            assert treant.universes.default is None
 
         def test_set_resnums(self, treant):
             """Test that we can add resnums to a universe."""
@@ -252,7 +252,7 @@ class TestReadOnly:
             c = mds.Sim('testsim')
 
             # copy universe files to within the Sim's tree
-            sub = py.path.local(c.basedir).mkdir('sub')
+            sub = py.path.local(c.abspath).mkdir('sub')
             GRO_t = sub.join(self.GRO)
             XTC_t = sub.join(self.XTC)
             py.path.local(GRO).copy(GRO_t)
@@ -260,10 +260,10 @@ class TestReadOnly:
 
             c.universes.add('main', GRO_t.strpath, XTC_t.strpath)
 
-            py.path.local(c.basedir).chmod(0550, rec=True)
+            py.path.local(c.abspath).chmod(0550, rec=True)
 
         def fin():
-            py.path.local(c.basedir).chmod(0770, rec=True)
+            py.path.local(c.abspath).chmod(0770, rec=True)
 
         request.addfinalizer(fin)
 
@@ -278,10 +278,10 @@ class TestReadOnly:
         """Test that Sim can access Universe when read-only, especially
         when universe files have moved with it (stale paths).
         """
-        py.path.local(sim.basedir).chmod(0770, rec=True)
+        py.path.local(sim.abspath).chmod(0770, rec=True)
         sim.location = tmpdir.mkdir('test').strpath
-        py.path.local(sim.basedir).chmod(0550, rec=True)
+        py.path.local(sim.abspath).chmod(0550, rec=True)
 
         assert isinstance(sim.universe, MDAnalysis.Universe)
 
-        py.path.local(sim.basedir).chmod(0770, rec=True)
+        py.path.local(sim.abspath).chmod(0770, rec=True)

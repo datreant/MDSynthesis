@@ -38,7 +38,7 @@ class TestUniversehound:
         """
         with tmpdir.as_cwd():
             s = mds.Sim('testsim')
-            sub = py.path.local(s.basedir).mkdir('sub')
+            sub = py.path.local(s.abspath).mkdir('sub')
             GRO_t = sub.join(self.GRO)
             XTC_t = sub.join(self.XTC)
             py.path.local(GRO).copy(GRO_t)
