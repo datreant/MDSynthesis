@@ -20,10 +20,10 @@ science, letting the computer handle the lower-level logistical details.
 """
 # Bring some often used objects into the current namespace
 import datreant.core
-import datreant.data
 from datreant.core import Treant, Group, Bundle
 
 from .treants import Sim
+from . import attach
 
 __all__ = ['Sim', 'Group', 'Bundle']
 __version__ = "0.6.0"  # NOTE: keep in sync with RELEASE in setup.py
