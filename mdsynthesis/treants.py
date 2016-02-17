@@ -2,12 +2,11 @@
 Basic Treant objects: the organizational units for :mod:`mdsynthesis`.
 
 """
-import os
+import warnings
 
 from datreant.core.treants import Treant
 from . import limbs
 from .backends import statefiles
-from MDAnalysis import Universe
 
 
 class Sim(Treant):
@@ -89,8 +88,8 @@ class Sim(Treant):
             return self._universe
         else:
             self._universe = None
-            self._logger.info('This universe is no longer defined. '
-                              'It has been detached.')
+            warnings.warn('This universe is no longer defined. '
+                          'It has been detached.')
 
     @property
     def universes(self):

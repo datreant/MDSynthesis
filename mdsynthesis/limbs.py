@@ -11,6 +11,7 @@ often used as components of a Treant.
 import os
 from six import string_types
 import numpy as np
+import warnings
 
 from datreant.core.limbs import Limb
 from MDAnalysis import Universe
@@ -288,7 +289,7 @@ class Universes(Limb):
             try:
                 self.add(handle, topology, *trajectory)
             except OSError:
-                self._logger.info(
+                warnings.warn(
                     "Cannot update paths for universe '{}';".format(handle) +
                     " state file is read-only.")
         else:
