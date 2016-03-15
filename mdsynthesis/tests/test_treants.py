@@ -19,7 +19,10 @@ class TestSim(TestTreant):
     """Test Sim-specific features"""
     treantname = 'testsim'
     treanttype = 'Sim'
-    treantclass = mds.Sim
+
+    @pytest.fixture
+    def treantclass(self):
+        return mds.Sim
 
     @pytest.fixture
     def treant(self, tmpdir):

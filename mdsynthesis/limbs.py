@@ -168,7 +168,7 @@ class Universes(Limb):
 
             # add trajectory paths
             udict['traj'] = list()
-            for segment in trajectory:
+            for segment in outtraj:
                 udict['traj'].append(
                         [os.path.abspath(segment),
                          os.path.relpath(segment, self._treant.abspath)])

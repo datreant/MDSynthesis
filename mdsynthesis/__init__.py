@@ -19,8 +19,8 @@ science, letting the computer handle the lower-level logistical details.
 
 """
 # Bring some often used objects into the current namespace
-import datreant.core
-from datreant.core import Treant, Group, Bundle
+from datreant.core import Treant, Group, Bundle, Tree, Leaf, View
+from datreant.core import get, discover
 
 from .treants import Sim
 from . import attach
