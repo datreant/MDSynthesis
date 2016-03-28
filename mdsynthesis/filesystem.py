@@ -15,7 +15,7 @@ class Universehound(object):
     they go missing.
 
     """
-    def __init__(self, caller, uname):
+    def __init__(self, caller):
         """Generate a Universehound to track down Universe files.
 
         :Arguments:
@@ -26,7 +26,6 @@ class Universehound(object):
 
         """
         self.caller = caller
-        self.uname = uname
 
         # once found: uuids as keys, absolute paths as values
         self.ufiles = list()

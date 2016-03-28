@@ -91,26 +91,38 @@ class Sim(Treant):
             warnings.warn('This universe is no longer defined. '
                           'It has been detached.')
 
-    @property
-    def universes(self):
-        """Manage the defined universes of the Sim.
+    def _activate(self):
+        """Make the universe.
 
-        Universes are interfaces to raw simulation data. The Sim can store
-        multiple universe definitions corresponding to different versions
-        of the same simulation output (e.g. post-processed trajectories derived
-        from the same raw trajectory). The Sim has at most one universe
-        definition that is "active" at one time, with stored selections for
-        this universe directly available via ``Sim.selections``.
-
-        The Sim can also store a preference for a "default" universe, which is
-        activated on a call to ``Sim.universe`` when no other universe is
-        active.
+        If a resnum definition exists for the universe, it is applied.
 
         """
-        if not self._universes:
-            self._universes = limbs.Universes(self)
+        uh = filesystem.Universehound(self, handle)
+        paths = uh.fetch()
+        topology = paths['top']
+        trajectory = paths['traj']
 
-        return self._universes
+        self._treant._universe = Universe(topology, *trajectory)
+        self._treant._uname = handle
+        self._apply_resnums()
+
+        # update the universe definition; will automatically build current
+        # path variants for each file
+        # if read-only, move on
+        try:
+            self.add(handle, topology, *trajectory)
+        except OSError:
+            warnings.warn(
+                "Cannot update paths for universe '{}';".format(handle) +
+                " state file is read-only.")
+
+    @property
+    def topology(self):
+        pass
+
+    @property
+    def trajectory(self):
+        pass
 
     @property
     def selections(self):
