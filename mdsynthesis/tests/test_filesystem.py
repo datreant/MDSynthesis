@@ -28,7 +28,8 @@ class TestUniversehound:
             py.path.local(GRO).copy(GRO_t)
             py.path.local(XTC).copy(XTC_t)
 
-            s.universes.add('spam', GRO_t.strpath, XTC_t.strpath)
+            s.topology = GRO_t.strpath
+            s.trajectory = XTC_t.strpath
         return s
 
     @pytest.fixture
@@ -44,7 +45,8 @@ class TestUniversehound:
             py.path.local(GRO).copy(GRO_t)
             py.path.local(XTC).copy(XTC_t)
 
-            s.universes.add('spam', GRO_t.strpath, XTC_t.strpath)
+            s.topology = GRO_t.strpath
+            s.trajectory = XTC_t.strpath
         return s
 
     def test_move_Sim_external(self, sim_external, tmpdir):
@@ -54,17 +56,17 @@ class TestUniversehound:
         sim_external.location = tmpdir.mkdir('test').strpath
         assert isinstance(sim_external.universe, MDAnalysis.Universe)
 
-        top, traj = sim_external.universes.define('spam')
-        assert sim_external.universe.filename == top
-        assert sim_external.universe.trajectory.filename == traj[0]
+        sim = sim_external
+        assert sim.universe.filename == sim.topology
+        assert sim.universe.trajectory.filename == sim.trajectory
 
     def test_move_Sim_internal(self, sim_internal, tmpdir):
         sim_internal.location = tmpdir.mkdir('test').strpath
         assert isinstance(sim_internal.universe, MDAnalysis.Universe)
 
-        top, traj = sim_internal.universes.define('spam')
-        assert sim_internal.universe.filename == top
-        assert sim_internal.universe.trajectory.filename == traj[0]
+        sim = sim_internal
+        assert sim.universe.filename == sim.topology
+        assert sim.universe.trajectory.filename == sim.trajectory
 
     def test_move_Sim_internal_copy(self, sim_internal, tmpdir):
         """We move the whole Sim, including its internal trajectory files, and
@@ -72,7 +74,7 @@ class TestUniversehound:
         be.
         """
         grofile = tmpdir.join(sim_internal.name, 'sub', self.GRO)
-        assert sim_internal.universes.define('spam')[0] == grofile.strpath
+        assert sim_internal.topology == grofile.strpath
 
         sim_internal.location = tmpdir.mkdir('test').strpath
         tmpdir.join('test', sim_internal.name, 'sub', self.GRO).copy(

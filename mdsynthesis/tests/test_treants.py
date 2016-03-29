@@ -19,7 +19,10 @@ class TestSim(TestTreant):
     """Test Sim-specific features"""
     treantname = 'testsim'
     treanttype = 'Sim'
-    treantclass = mds.Sim
+
+    @pytest.fixture
+    def treantclass(self):
+        return mds.Sim
 
     @pytest.fixture
     def treant(self, tmpdir):
@@ -27,114 +30,24 @@ class TestSim(TestTreant):
             s = mds.Sim(TestSim.treantname)
         return s
 
-    class TestUniverses:
+    class TestUniverse:
         """Test universe functionality"""
 
         def test_add_universe(self, treant):
-            """Test adding new unverse definitions"""
-            treant.universes.add('spam', GRO, XTC)
+            """Test adding a new unverse definition"""
+            treant.topology = GRO
+            treant.trajectory = XTC
 
-            assert 'spam' in treant.universes
-            assert isinstance(treant.universes['spam'], MDAnalysis.Universe)
+            assert isinstance(treant.universe, MDAnalysis.Universe)
 
             assert treant.universe.filename == GRO
             assert treant.universe.trajectory.filename == XTC
 
         def test_remove_universe(self, treant):
             """Test universe removal"""
-            treant.universes.add('spam', GRO, XTC)
-            treant.universes.add('eggs', GRO, XTC)
+            treant.topology = None
 
-            assert 'spam' in treant.universes
-
-            treant.universes.remove('spam')
-
-            assert 'spam' not in treant.universes
-            assert 'eggs' in treant.universes
-
-            with pytest.raises(KeyError):
-                treant.universes.remove('ham')
-
-        def test_rename_universe(self, treant):
-            """Test universe renaming"""
-            treant.universes.add('spam', GRO, XTC)
-            treant.universes.add('eggs', GRO, XTC)
-
-            assert 'spam' in treant.universes
-
-            treant.universes.rename('spam', 'boots')
-
-            assert 'spam' not in treant.universes
-            assert 'boots' in treant.universes
-            assert 'eggs' in treant.universes
-
-            with pytest.raises(KeyError):
-                treant.universes.rename('ham', 'lark')
-
-            with pytest.raises(ValueError):
-                treant.universes.rename('boots', 'eggs')
-
-        def test_set_default_universe(self, treant):
-            """Test that a default universe exists, and that it's settable"""
-            treant.universes.add('lolcats', GRO, XTC)
-
-            assert treant.universe.filename == GRO
-            assert treant.universe.trajectory.filename == XTC
-            assert treant._uname == 'lolcats'
-            treant.universes.deactivate()
-
-            treant.universes.add('megaman', GRO)
-            treant.universes.default = 'megaman'
-
-            assert treant.universes.default == 'megaman'
-
-            assert treant.universe.filename == GRO
-            assert treant.universe.trajectory.filename == GRO
-            assert treant._uname == 'megaman'
-
-            treant.universes.remove('megaman')
-
-            assert treant.universes.default is None
-
-        def test_set_resnums(self, treant):
-            """Test that we can add resnums to a universe."""
-            treant.universes.add('lolcats', GRO, XTC)
-
-            protein = treant.universe.select_atoms('protein')
-            resids = protein.residues.resids
-            protein.residues.set_resnum(resids + 3)
-
-            treant.universes.resnums('lolcats',
-                                     treant.universe.residues.resnums)
-
-            treant.universes['lolcats']
-
-            protein = treant.universe.select_atoms('protein')
-            assert (resids + 3 == protein.residues.resnums).all()
-
-            # test resetting of resnums
-            protein.residues.set_resnum(resids + 6)
-
-            assert (protein.residues.resnums == resids + 6).all()
-            treant.universes.resnums('lolcats',
-                                     treant.universe.residues.resnums)
-
-            treant.universes['lolcats']
-
-            protein = treant.universe.select_atoms('protein')
-            assert (resids + 6 == protein.residues.resnums).all()
-
-        def test_KeyError(self, treant):
-            """Test that a KeyError raised when trying to activate a Universe
-            that doesn't exist.
-            """
-            with pytest.raises(KeyError):
-                treant.universes.activate('ham')
-
-            treant.universes.add('lolcats', GRO, XTC)
-
-            with pytest.raises(KeyError):
-                treant.universes.activate('eggs')
+            assert treant.topology is None
 
     class TestSelections:
         """Test stored selections functionality"""
@@ -142,7 +55,9 @@ class TestSim(TestTreant):
         def treant(self, tmpdir):
             with tmpdir.as_cwd():
                 s = mds.Sim(TestSim.treantname)
-                s.universes.add('spam', GRO, XTC)
+
+                s.topology = GRO
+                s.trajectory = XTC
             return s
 
         def test_add_selection(self, treant):
@@ -258,7 +173,8 @@ class TestReadOnly:
             py.path.local(GRO).copy(GRO_t)
             py.path.local(XTC).copy(XTC_t)
 
-            c.universes.add('main', GRO_t.strpath, XTC_t.strpath)
+            c.topology = GRO_t.strpath
+            c.trajectory = XTC_t.strpath
 
             py.path.local(c.abspath).chmod(0550, rec=True)
 
