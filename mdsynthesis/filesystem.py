@@ -15,20 +15,15 @@ class Universehound(object):
     they go missing.
 
     """
-    def __init__(self, caller, uname):
+    def __init__(self, caller):
         """Generate a Universehound to track down Universe files.
 
         :Arguments:
             *caller*
                 object that summoned the Univershound
-            *uname*
-                universe handle to find files for
 
         """
         self.caller = caller
-        self.uname = uname
-
-        # once found: uuids as keys, absolute paths as values
         self.ufiles = list()
 
     def fetch(self):
@@ -53,10 +48,10 @@ class Universehound(object):
         results = self._check_basedirs()
 
         if (results['top'] is None) or (None in results['traj']):
-            raise IOError("At least one file for" +
-                          " universe '{}' could not".format(self.uname) +
-                          " be found from stored absolute and relative" +
-                          " paths. Re-add the universe with correct paths.")
+            raise IOError("At least one file for"
+                          " universe could not"
+                          " be found from stored absolute and relative"
+                          " paths. Set correct paths manually.")
 
         # TODO: include hash check; will require stored hashes for each
         # universe file
@@ -77,8 +72,8 @@ class Universehound(object):
         top = dict()
         traj = dict()
         for pathtype in ('abs', 'rel'):
-            top[pathtype], traj[pathtype] = self.caller.define(
-                    self.uname, pathtype=pathtype)
+            top[pathtype], traj[pathtype] = self.caller._define(
+                    pathtype=pathtype)
         outpaths = dict()
 
         def check(paths):
@@ -92,9 +87,7 @@ class Universehound(object):
             if os.path.exists(paths['abs']):
                 out['abs'] = paths['abs']
 
-            candidate = os.path.join(
-                        self.caller._treant._backend.get_location(),
-                        paths['rel'])
+            candidate = os.path.join(self.caller.abspath, paths['rel'])
             if os.path.exists(candidate):
                 out['rel'] = candidate
 
@@ -102,10 +95,8 @@ class Universehound(object):
             # file. if so, accept; if not, throw exception
             if ((out['abs'] and out['rel']) and not
                     os.path.samefile(out['abs'], out['rel'])):
-                raise IOError("Absolute and relative paths for file" +
-                              " of universe '{}'".format(self.uname) +
-                              " point to different files; update paths" +
-                              " by re-adding this universe")
+                raise IOError("Absolute and relative paths for file '{}'"
+                              " point to different files.".format(out['abs']))
             elif out['rel']:
                 # otherwise, accept rel
                 chosen = os.path.abspath(out['rel'])
@@ -115,8 +106,7 @@ class Universehound(object):
             else:
                 # if none of the paths resolve, raise exception
                 raise IOError(
-                        "Topology file not found for universe '{}'".format(
-                            self.uname))
+                        "File '{}' not found for universe".format(out['abs']))
 
             return chosen
 
