@@ -1,8 +1,3 @@
-.. MDSynthesis documentation master file, created by
-   sphinx-quickstart2 on Mon Dec 29 20:48:44 2014.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 =============================================================
 MDSynthesis: a persistence engine for molecular dynamics data
 =============================================================
@@ -41,17 +36,6 @@ Collect aggregated data and keep track of it, too
 :doc:`Sim <Sim>` objects can be gathered into arbitrary collections with
 :doc:`Group <Group>` objects.  Groups can store datasets obtained from these
 collections, and can even contain other Groups as members.
-
-Query for simulation results instead of manually hunting for them
------------------------------------------------------------------
-.. note:: This feature is planned, but not yet present in the codebase.
-
-:doc:`Sim <Sim>` and :doc:`Group <Group>` objects persistently store their data
-to disk automatically, but it can be tedious to navigate around the filesystem
-to recall them later.  The :doc:`Coordinator <Coordinator>` object gives a
-single interface for querying all :doc:`Sim <Sim>` and :doc:`Group <Group>`
-objects it is made aware of, allowing retrieval of specific datasets with a
-single line of code.
 
 Getting MDSynthesis
 ===================

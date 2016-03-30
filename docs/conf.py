@@ -277,16 +277,4 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
 
 # otherwise, readthedocs.org uses their theme by default, so no need to specify it
 
-# get docstrings for init methods, too
-autoclass_content = 'both'
-
-# for readthedocs, since it cannot compile dependencies that require C libraries
-from mock import Mock as MagicMock
-
-class Mock(MagicMock):
-    @classmethod
-    def __getattr__(cls, name):
-            return Mock()
-
-MOCK_MODULES = ['datreant', 'pandas', 'tables', 'h5py', 'MDAnalysis', 'scandir', 'yaml']
-sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
+autoclass_content = 'class'

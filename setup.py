@@ -7,16 +7,14 @@ For a basic installation just type the command::
 
 """
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(name='mdsynthesis',
       version='0.6.0-dev',
       maintainer='David Dotson', 
       maintainer_email='dotsdl@gmail.com',
-      packages=[
-          'mdsynthesis',
-          'mdsynthesis.backends',
-          'mdsynthesis.tests'],
+      packages=find_packages('src'),
+      package_dir={'': 'src'},
       license='GPL 2',
       long_description=open('README.rst').read(),
       install_requires=[

@@ -1,0 +1,6 @@
+name: datreant.data
+dependencies:
+- h5py
+- hdf5
+- pandas
+- pytables
