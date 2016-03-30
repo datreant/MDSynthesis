@@ -87,7 +87,7 @@ class Universehound(object):
             if os.path.exists(paths['abs']):
                 out['abs'] = paths['abs']
 
-            candidate = os.path.join(self.caller.abspath, paths['rel'])
+            candidate = os.path.join(self.caller._treant.abspath, paths['rel'])
             if os.path.exists(candidate):
                 out['rel'] = candidate
 

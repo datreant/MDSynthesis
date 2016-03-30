@@ -12,7 +12,7 @@ import py
 from datreant.core.tests.test_treants import TestTreant
 
 import MDAnalysis
-from MDAnalysisTests.datafiles import GRO, XTC
+from MDAnalysisTests.datafiles import PDB, GRO, XTC
 
 
 class TestSim(TestTreant):
@@ -35,8 +35,8 @@ class TestSim(TestTreant):
 
         def test_add_universe(self, treant):
             """Test adding a new unverse definition"""
-            treant.topology = GRO
-            treant.trajectory = XTC
+            treant.udef.topology = GRO
+            treant.udef.trajectory = XTC
 
             assert isinstance(treant.universe, MDAnalysis.Universe)
 
@@ -45,22 +45,42 @@ class TestSim(TestTreant):
 
         def test_remove_universe(self, treant):
             """Test universe removal"""
-            treant.topology = None
+            treant.udef.topology = GRO
+            treant.udef.trajectory = XTC
 
-            assert treant.topology is None
+            assert isinstance(treant.universe, MDAnalysis.Universe)
+
+            treant.udef.topology = None
+            assert treant.udef.topology is None
+            assert treant.universe is None
+
+            # trajectory definition should still be there
+            assert treant.udef.trajectory
+
+            # this should give us a universe again
+            treant.udef.topology = PDB
+
+            assert isinstance(treant.universe, MDAnalysis.Universe)
+
+            # removing trajectories should keep universe, but with PDB as
+            # coordinates
+            treant.udef.trajectory = None
+
+            assert isinstance(treant.universe, MDAnalysis.Universe)
+            assert treant.universe.trajectory.n_frames == 1
 
         def test_set_resnums(self, treant):
             """Test that we can add resnums to a universe."""
-            treant.topology = GRO
-            treant.trajectory = XTC
+            treant.udef.topology = GRO
+            treant.udef.trajectory = XTC
 
             protein = treant.universe.select_atoms('protein')
             resids = protein.residues.resids
             protein.residues.set_resnum(resids + 3)
 
-            treant._set_resnums(treant.universe.residues.resnums)
+            treant.udef._set_resnums(treant.universe.residues.resnums)
 
-            treant.reload_universe()
+            treant.udef.reload_universe()
 
             protein = treant.universe.select_atoms('protein')
             assert (resids + 3 == protein.residues.resnums).all()
@@ -69,116 +89,116 @@ class TestSim(TestTreant):
             protein.residues.set_resnum(resids + 6)
 
             assert (protein.residues.resnums == resids + 6).all()
-            treant._set_resnums(treant.universe.residues.resnums)
+            treant.udef._set_resnums(treant.universe.residues.resnums)
 
-            treant.reload_universe()
+            treant.udef.reload_universe()
 
             protein = treant.universe.select_atoms('protein')
             assert (resids + 6 == protein.residues.resnums).all()
 
     class TestSelections:
-        """Test stored selections functionality"""
+        """Test stored atomselections functionality"""
         @pytest.fixture
         def treant(self, tmpdir):
             with tmpdir.as_cwd():
                 s = mds.Sim(TestSim.treantname)
 
-                s.topology = GRO
-                s.trajectory = XTC
+                s.udef.topology = GRO
+                s.udef.trajectory = XTC
             return s
 
         def test_add_selection(self, treant):
             """Test adding new selection definitions"""
 
-            treant.selections.add('CA', 'protein and name CA')
-            treant.selections.add('someres', 'resid 12')
+            treant.atomselections.add('CA', 'protein and name CA')
+            treant.atomselections.add('someres', 'resid 12')
 
             CA = treant.universe.select_atoms('protein and name CA')
             someres = treant.universe.select_atoms('resid 12')
 
-            assert (CA.indices == treant.selections['CA'].indices).all()
+            assert (CA.indices == treant.atomselections['CA'].indices).all()
             assert (someres.indices ==
-                    treant.selections['someres'].indices).all()
+                    treant.atomselections['someres'].indices).all()
 
         def test_remove_selection(self, treant):
             """Test universe removal"""
 
-            treant.selections.add('CA', 'protein and name CA')
-            treant.selections.add('someres', 'resid 12')
+            treant.atomselections.add('CA', 'protein and name CA')
+            treant.atomselections.add('someres', 'resid 12')
 
-            assert 'CA' in treant.selections
-            assert 'someres' in treant.selections
+            assert 'CA' in treant.atomselections
+            assert 'someres' in treant.atomselections
 
-            treant.selections.remove('CA')
+            treant.atomselections.remove('CA')
 
-            assert 'CA' not in treant.selections
-            assert 'someres' in treant.selections
+            assert 'CA' not in treant.atomselections
+            assert 'someres' in treant.atomselections
 
-            del treant.selections['someres']
-            treant.selections.add('moreres', 'resid 12:20')
+            del treant.atomselections['someres']
+            treant.atomselections.add('moreres', 'resid 12:20')
 
-            assert 'CA' not in treant.selections
-            assert 'someres' not in treant.selections
-            assert 'moreres' in treant.selections
-
-            with pytest.raises(KeyError):
-                treant.selections.remove('someres')
+            assert 'CA' not in treant.atomselections
+            assert 'someres' not in treant.atomselections
+            assert 'moreres' in treant.atomselections
 
             with pytest.raises(KeyError):
-                del treant.selections['CA']
+                treant.atomselections.remove('someres')
+
+            with pytest.raises(KeyError):
+                del treant.atomselections['CA']
 
         def test_selection_keys(self, treant):
-            treant.selections.add('CA', 'protein and name CA')
-            treant.selections.add('someres', 'resid 12')
+            treant.atomselections.add('CA', 'protein and name CA')
+            treant.atomselections.add('someres', 'resid 12')
 
-            assert set(('CA', 'someres')) == set(treant.selections.keys())
+            assert set(('CA', 'someres')) == set(treant.atomselections.keys())
 
         def test_selection_define(self, treant):
             CA = 'protein and name CA'
-            treant.selections.add('CA', CA)
+            treant.atomselections.add('CA', CA)
 
-            assert treant.selections.define('CA')[0] == CA
+            assert treant.atomselections.define('CA')[0] == CA
 
         def test_selection_get(self, treant):
             with pytest.raises(KeyError):
-                treant.selections['CA']
+                treant.atomselections['CA']
 
-        def test_add_selections_multiple_strings_via_add(self, treant):
+        def test_add_atomselections_multiple_strings_via_add(self, treant):
             """Add a selection that has multiple selection strings"""
-            treant.selections.add('funky town', 'name N', 'name CA')
-            assert 'funky town' in treant.selections
+            treant.atomselections.add('funky town', 'name N', 'name CA')
+            assert 'funky town' in treant.atomselections
 
             ref = treant.universe.select_atoms('name N', 'name CA')
-            sel = treant.selections['funky town']
+            sel = treant.atomselections['funky town']
             assert (ref.indices == sel.indices).all()
 
-        def test_add_selections_multiple_strings_via_setitem(self, treant):
+        def test_add_atomselections_multiple_strings_via_setitem(self, treant):
             """Add a selection that has multiple selection strings"""
-            treant.selections['funky town 2'] = 'name N', 'name CA'
-            assert 'funky town 2' in treant.selections
+            treant.atomselections['funky town 2'] = 'name N', 'name CA'
+            assert 'funky town 2' in treant.atomselections
 
             ref = treant.universe.select_atoms('name N', 'name CA')
-            sel = treant.selections['funky town 2']
+            sel = treant.atomselections['funky town 2']
             assert (ref.indices == sel.indices).all()
 
         def test_add_selection_as_atomgroup_via_add(self, treant):
             """Make an arbitrary AtomGroup then save selection as AG"""
             ag = treant.universe.atoms[:10:2]
 
-            treant.selections.add('ag sel', ag)
-            assert 'ag sel' in treant.selections
+            treant.atomselections.add('ag sel', ag)
+            assert 'ag sel' in treant.atomselections
 
-            ag2 = treant.selections['ag sel']
+            ag2 = treant.atomselections['ag sel']
             assert (ag.indices == ag2.indices).all()
 
         def test_add_selection_as_atomgroup_via_setitem(self, treant):
             """Make an arbitrary AtomGroup then save selection as AG"""
             ag = treant.universe.atoms[25:50:3]
 
-            treant.selections['ag sel 2'] = ag
-            assert 'ag sel 2' in treant.selections
+            treant.atomselections['ag sel 2'] = ag
+            assert 'ag sel 2' in treant.atomselections
 
-            ag2 = treant.selections['ag sel 2']
+            ag2 = treant.atomselections['ag sel 2']
             assert (ag.indices == ag2.indices).all()
 
 
@@ -200,8 +220,8 @@ class TestReadOnly:
             py.path.local(GRO).copy(GRO_t)
             py.path.local(XTC).copy(XTC_t)
 
-            c.topology = GRO_t.strpath
-            c.trajectory = XTC_t.strpath
+            c.udef.topology = GRO_t.strpath
+            c.udef.trajectory = XTC_t.strpath
 
             py.path.local(c.abspath).chmod(0550, rec=True)
 
