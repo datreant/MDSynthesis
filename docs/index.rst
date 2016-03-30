@@ -10,6 +10,9 @@ comparisons of two or more trajectories against each other. In any case, it may
 be time-consuming to obtain these lower-dimensional intermediate data, and so
 it is useful to store them.
 
+.. warning:: This package is **experimental**. It is not API stable, and has
+             many rough edges and limitations. It is, however, usable.
+
 Stay organized
 ==============
 MDSynthesis is designed to perform the logistics of medium-to-large-scale
@@ -23,73 +26,50 @@ track of where things are and how they are stored.
 
 Efficiently store intermediate data from individual simulations for easy recall
 -------------------------------------------------------------------------------
-For a given simulation trajectory, MDSynthesis gives an interface (the :doc:`Sim <Sim>`
-object) to the simulation data itself through `MDAnalysis`_. Data structures
-generated from raw trajectories (pandas objects, numpy arrays, or any pure
-python structure) can then be stored and easily recalled later. Under the hood,
-datasets are stored in the efficient HDF5 format when possible.
+The MDSynthesis **Sim** object gives an interface to raw simulation data
+through `MDAnalysis`_. Data structures generated from raw trajectories (pandas
+objects, numpy arrays, or any pure python structure) can then be stored and
+easily recalled later. Under the hood, datasets are stored in the efficient
+HDF5 format when possible.
 
-.. _MDAnalysis: http://mdanalysis.googlecode.com
+.. _MDAnalysis: http://www.mdanalysis.org
 
-Collect aggregated data and keep track of it, too
--------------------------------------------------
-:doc:`Sim <Sim>` objects can be gathered into arbitrary collections with
-:doc:`Group <Group>` objects.  Groups can store datasets obtained from these
-collections, and can even contain other Groups as members.
+Powered by ``datreant`` under the hood
+--------------------------------------
+MDSynthesis is built on top of the general-purpose `datreant`_ library.  The
+Sim is a :class:`~datreant.core.Treant` with special features for working with
+molecular dynamics data, but every feature of datreant applies to MDSynthesis.
+
+.. _`datreant`: http://datreant.org/
 
 Getting MDSynthesis
 ===================
-We have yet to make an official release, but you can get the current state
-of the codebase from the `master branch on GitHub 
-<https://github.com/Becksteinlab/MDSynthesis>`__.
+See the `installation instructions`_ for installation details. The package
+itself is pure Python, but many of its dependencies are not.
 
-See the :doc:`installation instructions <install>` to set it up.
+If you want to work on the code, either for yourself or to contribute back to
+the project, clone the repository to your local machine with::
 
-Dependencies
-============
-* MDAnalysis: 0.9.1 or higher
-* pandas: 0.16.1 or higher
-* PyTables: 3.2.0 or higher
-* h5py: 2.5.0 or higher
-* scandir: 1.0 or higher
+    git clone https://github.com/datreant/MDSynthesis.git
+
+.. _`installation instructions`: http://mdsynthesis.readthedocs.org/en/develop/install.html
 
 Contributing
 ============
 This project is still under heavy development, and there are certainly rough
 edges and bugs. Issues and pull requests welcome!
 
-.. raw:: html
+MDSynthesis follows the development model of `datreant`_; see the
+`contributor's guide`_ to learn how to get started with contributing back.
 
-    <div style="display:none">
+.. _`contributor's guide`: http://datreant.readthedocs.org/en/latest/contributing.html
 
 --------------------------------------------------------------------------------
 
-Documentation
--------------
-
 .. toctree::
     :maxdepth: 1
+    :caption: User Documentation
 
     install
-    data
-    Sim
-    Group
-    tags-categories
-    Coordinator
-    interactive
-
-Misc
-----
-
-.. toctree::
-    :maxdepth: 1
-
-    whatsnew
-    faq
-
---------------------------------------------------------------------------------
-
-.. raw:: html
-
-   </div>
-
+    sim
+    api 
