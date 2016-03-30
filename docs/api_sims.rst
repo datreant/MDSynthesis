@@ -1,6 +1,6 @@
-Sims
-====
-Sims are the core units of functionality of ``mdsynthesis``. They function as
+Individual simulations
+======================
+The Sim is the core unit of functionality of ``mdsynthesis``. They function as
 markers for simulation data, giving an interface to raw topologies and
 trajectories by way of MDAnalysis.
 
