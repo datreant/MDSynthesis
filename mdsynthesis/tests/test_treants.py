@@ -49,6 +49,33 @@ class TestSim(TestTreant):
 
             assert treant.topology is None
 
+        def test_set_resnums(self, treant):
+            """Test that we can add resnums to a universe."""
+            treant.topology = GRO
+            treant.trajectory = XTC
+
+            protein = treant.universe.select_atoms('protein')
+            resids = protein.residues.resids
+            protein.residues.set_resnum(resids + 3)
+
+            treant._set_resnums(treant.universe.residues.resnums)
+
+            treant.reload_universe()
+
+            protein = treant.universe.select_atoms('protein')
+            assert (resids + 3 == protein.residues.resnums).all()
+
+            # test resetting of resnums
+            protein.residues.set_resnum(resids + 6)
+
+            assert (protein.residues.resnums == resids + 6).all()
+            treant._set_resnums(treant.universe.residues.resnums)
+
+            treant.reload_universe()
+
+            protein = treant.universe.select_atoms('protein')
+            assert (resids + 6 == protein.residues.resnums).all()
+
     class TestSelections:
         """Test stored selections functionality"""
         @pytest.fixture

@@ -6,7 +6,9 @@ import warnings
 import os
 from six import string_types
 
+import numpy as np
 from MDAnalysis import Universe
+from numpy.lib.utils import deprecate
 
 from datreant.core import Treant, Leaf
 from . import limbs
@@ -122,6 +124,8 @@ class Sim(Treant):
             self._universe = Universe(topology, *trajectory,
                                       **self.universe_kwargs)
 
+        self._apply_resnums()
+
         # update the universe definition; will automatically build current
         # path variants for each file
         # if read-only, move on
@@ -132,6 +136,12 @@ class Sim(Treant):
             warnings.warn(
                 "Cannot update paths for universe; "
                 " state file is read-only.")
+
+    def reload_universe(self):
+        """Re-load the universe from its stored definition.
+
+        """
+        self._activate()
 
     @property
     def topology(self):
@@ -227,6 +237,47 @@ class Sim(Treant):
                 trajstate.append(
                         [os.path.abspath(traj),
                          os.path.relpath(traj, self.abspath)])
+
+    def _apply_resnums(self):
+        """Apply resnum definition to universe.
+
+        """
+        with self._read:
+            simdict = self._state['mdsynthesis']['sim']
+            try:
+                resnums = simdict['resnums']
+            except KeyError:
+                resnums = None
+
+        if resnums:
+            self._universe.residues.set_resnums(np.array(resnums))
+
+    @deprecate(message="resnum storage is deprecated")
+    def _set_resnums(self, resnums):
+        """Define resnums for the universe.
+
+        Resnums are useful for referring to residues by their canonical resid,
+        for instance that stored in the PDB. By giving a resnum definition
+        for the universe, this definition will be applied to the universe.
+
+        Will overwrite existing resnum definition if it exists.
+
+        Parameters
+        ----------
+        resnums : array_like
+                array or list giving the resnum for each residue in the
+                topology, in atom index order; giving ``None`` will delete
+                resnum definition
+        """
+        with self._write:
+            simdict = self._state['mdsynthesis']['sim']
+            if resnums is None:
+                simdict['resnums'] = None
+            else:
+                simdict['resnums'] = list(resnums)
+
+            if self._universe:
+                self._apply_resnums()
 
     def _define(self, pathtype='abs'):
         """Get the stored path to the topology and trajectory used for the
