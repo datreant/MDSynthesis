@@ -111,7 +111,7 @@ class Sim(Treant):
         # attach universe if not attached, and only give results if a
         # universe is present thereafter
         if not self._udef:
-            self._udef = limbs.Udef(self)
+            self._udef = limbs.UniverseDefinition(self)
 
         return self._udef
 

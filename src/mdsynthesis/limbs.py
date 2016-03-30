@@ -22,8 +22,8 @@ from MDAnalysis.core.AtomGroup import AtomGroup
 from .filesystem import Universehound
 
 
-class Udef(Limb):
-    """Manage the defined universe of the Sim.
+class UniverseDefinition(Limb):
+    """The defined universe of the Sim.
 
     Universes are interfaces to raw simulation data, with stored selections for
     this universe directly available via ``Sim.atomselections``.
@@ -31,6 +31,39 @@ class Udef(Limb):
     """
     _name = 'udef'
     _filepaths = ['abs', 'rel']
+
+    def __init__(self, treant):
+        super(UniverseDefinition, self).__init__(treant)
+
+        subitems = {'topology': dict,
+                    'trajectory': list,
+                    'universe_kwargs': dict}
+
+        # init state if for udef not already there;
+        # if read-only, check that it is there,
+        # and raise exception if it is not
+        try:
+            with self._treant._write:
+                try:
+                    self._treant._state['mdsynthesis'][self._name]
+                except KeyError:
+                    self._treant._state['mdsynthesis'][self._name] = dict()
+
+                for key, value in subitems.items():
+                    try:
+                        self._treant._state['mdsynthesis'][self._name][key]
+                    except KeyError:
+                        self._treant._state['mdsynthesis'][self._name][key] = value()
+
+        except (IOError, OSError):
+            with self._treant._read:
+                try:
+                    self._treant._state['mdsynthesis'][self._name]
+                except KeyError:
+                    raise KeyError(
+                            ("Missing '{}' data, and cannot write to "
+                             "Treant '{}'".format(self._name,
+                                                  self._treant.filepath)))
 
     def _activate(self):
         """Make the universe and attach it.
@@ -80,7 +113,7 @@ class Udef(Limb):
 
         """
         with self._treant._read:
-            topstate = self._treant._state['mdsynthesis']['sim']['topology']
+            topstate = self._treant._state['mdsynthesis']['udef']['topology']
 
             if not topstate:
                 return None
@@ -106,10 +139,10 @@ class Udef(Limb):
 
     def _set_topology(self, path):
         with self._treant._write:
-            topstate = self._treant._state['mdsynthesis']['sim']['topology']
+            topstate = self._treant._state['mdsynthesis']['udef']['topology']
 
             if path is None:
-                self._treant._state['mdsynthesis']['sim']['topology'] = dict()
+                self._treant._state['mdsynthesis']['udef']['topology'] = dict()
             else:
                 topstate['abspath'] = os.path.abspath(path)
                 topstate['relpath'] = os.path.relpath(path,
@@ -127,7 +160,7 @@ class Udef(Limb):
 
         """
         with self._treant._read:
-            traj = self._treant._state['mdsynthesis']['sim']['trajectory']
+            traj = self._treant._state['mdsynthesis']['udef']['trajectory']
             if not traj:
                 return None
             elif len(traj) == 1:
@@ -157,8 +190,8 @@ class Udef(Limb):
 
     def _set_trajectory(self, trajs):
         with self._treant._write:
-            self._treant._state['mdsynthesis']['sim']['trajectory'] = []
-            trajstate = self._treant._state['mdsynthesis']['sim']['trajectory']
+            self._treant._state['mdsynthesis']['udef']['trajectory'] = []
+            trajstate = self._treant._state['mdsynthesis']['udef']['trajectory']
 
             for traj in trajs:
                 trajstate.append(
@@ -170,7 +203,7 @@ class Udef(Limb):
 
         """
         with self._treant._read:
-            simdict = self._treant._state['mdsynthesis']['sim']
+            simdict = self._treant._state['mdsynthesis']['udef']
             try:
                 resnums = simdict['resnums']
             except KeyError:
@@ -197,7 +230,7 @@ class Udef(Limb):
                 resnum definition
         """
         with self._treant._write:
-            simdict = self._treant._state['mdsynthesis']['sim']
+            simdict = self._treant._state['mdsynthesis']['udef']
             if resnums is None:
                 simdict['resnums'] = None
             else:
@@ -228,11 +261,11 @@ class Udef(Limb):
 
         """
         with self._treant._read:
-            top = self._treant._state['mdsynthesis']['sim']['topology']
+            top = self._treant._state['mdsynthesis']['udef']['topology']
             outtop = {'abs': top['abspath'],
                       'rel': top['relpath']}
 
-            trajs = self._treant._state['mdsynthesis']['sim']['trajectory']
+            trajs = self._treant._state['mdsynthesis']['udef']['trajectory']
             outtraj = {key: [] for key in self._filepaths}
 
         for traj in trajs:
@@ -252,7 +285,7 @@ class Udef(Limb):
 
         """
         with self._treant._read:
-            return self._treant._state['mdsynthesis']['sim']['universe_kwargs']
+            return self._treant._state['mdsynthesis']['udef']['universe_kwargs']
 
     @universe_kwargs.setter
     def universe_kwargs(self, kwargs):
@@ -260,7 +293,7 @@ class Udef(Limb):
             raise TypeError("Must be a dictionary")
 
         with self._treant._write:
-            simdict = self._treant._state['mdsynthesis']['sim']
+            simdict = self._treant._state['mdsynthesis']['udef']
             simdict['universe_kwargs'] = kwargs
 
 
@@ -271,6 +304,28 @@ class AtomSelections(Limb):
 
     """
     _name = 'atomselections'
+
+    def __init__(self, treant):
+        super(AtomSelections, self).__init__(treant)
+
+        # init state if for selections not already there;
+        # if read-only, check that it is there,
+        # and raise exception if it is not
+        try:
+            with self._treant._write:
+                try:
+                    self._treant._state['mdsynthesis'][self._name]
+                except KeyError:
+                    self._treant._state['mdsynthesis'][self._name] = dict()
+        except (IOError, OSError):
+            with self._treant._read:
+                try:
+                    self._treant._state['mdsynthesis'][self._name]
+                except KeyError:
+                    raise KeyError(
+                            ("Missing '{}' data, and cannot write to "
+                             "Treant '{}'".format(self._name,
+                                                  self._treant.filepath)))
 
     def __repr__(self):
         return "<Selections({})>".format(
@@ -366,7 +421,7 @@ class AtomSelections(Limb):
                 elif isinstance(sel, string_types):
                     outsel.append(sel)
 
-            seldict = self._treant._state['mdsynthesis']['sim']['selections']
+            seldict = self._treant._state['mdsynthesis']['atomselections']
             seldict[handle] = outsel
 
     def remove(self, *handle):
@@ -381,7 +436,7 @@ class AtomSelections(Limb):
 
         """
         with self._treant._write:
-            seldict = self._treant._state['mdsynthesis']['sim']['selections']
+            seldict = self._treant._state['mdsynthesis']['atomselections']
             for item in handle:
                 try:
                     del seldict[item]
@@ -393,7 +448,7 @@ class AtomSelections(Limb):
 
         """
         with self._treant._read:
-            seldict = self._treant._state['mdsynthesis']['sim']['selections']
+            seldict = self._treant._state['mdsynthesis']['atomselections']
             return seldict.keys()
 
     def _asAtomGroup(self, handle):
@@ -448,7 +503,7 @@ class AtomSelections(Limb):
             list of strings defining the atom selection
         """
         with self._treant._read:
-            seldict = self._treant._state['mdsynthesis']['sim']['selections']
+            seldict = self._treant._state['mdsynthesis']['atomselections']
 
         try:
             selstring = seldict[handle]
