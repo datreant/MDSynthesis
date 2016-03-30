@@ -264,7 +264,7 @@ class Udef(Limb):
             simdict['universe_kwargs'] = kwargs
 
 
-class Atomselections(Limb):
+class AtomSelections(Limb):
     """Stored atom selections for the universe.
 
     Useful atom selections can be stored for the universe and recalled later.

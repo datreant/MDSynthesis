@@ -20,11 +20,20 @@ The class :class:`mdsynthesis.Sim` is the central object of ``mdsynthesis``.
 
 .. _Selections_api:
 
-Selections
-``````````
-The class :class:`mdsynthesis.limbs.Selections` is the interface used by Sims to
+Udef
+````
+The class :class:`mdsynthesis.limbs.Udef` is the interface used by a Sim to
+define its :class:`MDAnalysis.Universe`.
+
+.. autoclass:: mdsynthesis.limbs.Udef
+    :members:
+    :inherited-members:
+
+AtomSelections
+``````````````
+The class :class:`mdsynthesis.limbs.AtomSelections` is the interface used by Sims to
 get :class:`MDAnalysis.AtomGroup` objects from stored selection definitions. 
 
-.. autoclass:: mdsynthesis.limbs.Selections
+.. autoclass:: mdsynthesis.limbs.AtomSelections
     :members:
     :inherited-members:

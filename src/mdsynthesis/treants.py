@@ -129,6 +129,6 @@ class Sim(Treant):
         # universe is present thereafter
         if self.universe:
             if not self._atomselections:
-                self._atomselections = limbs.Atomselections(self)
+                self._atomselections = limbs.AtomSelections(self)
 
             return self._atomselections
