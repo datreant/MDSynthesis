@@ -44,21 +44,22 @@ class UniverseDefinition(Limb):
         # and raise exception if it is not
         try:
             with self._treant._write:
+                mdsdict = self._treant._state['mdsynthesis']
                 try:
-                    self._treant._state['mdsynthesis'][self._name]
+                    mdsdict[self._name]
                 except KeyError:
-                    self._treant._state['mdsynthesis'][self._name] = dict()
+                    mdsdict[self._name] = dict()
 
                 for key, value in subitems.items():
                     try:
-                        self._treant._state['mdsynthesis'][self._name][key]
+                        mdsdict[self._name][key]
                     except KeyError:
-                        self._treant._state['mdsynthesis'][self._name][key] = value()
+                        mdsdict[self._name][key] = value()
 
         except (IOError, OSError):
             with self._treant._read:
                 try:
-                    self._treant._state['mdsynthesis'][self._name]
+                    mdsdict[self._name]
                 except KeyError:
                     raise KeyError(
                             ("Missing '{}' data, and cannot write to "
@@ -191,7 +192,8 @@ class UniverseDefinition(Limb):
     def _set_trajectory(self, trajs):
         with self._treant._write:
             self._treant._state['mdsynthesis']['udef']['trajectory'] = []
-            trajstate = self._treant._state['mdsynthesis']['udef']['trajectory']
+            mdsdict = self._treant._state['mdsynthesis']
+            trajstate = mdsdict['udef']['trajectory']
 
             for traj in trajs:
                 trajstate.append(
@@ -285,7 +287,8 @@ class UniverseDefinition(Limb):
 
         """
         with self._treant._read:
-            return self._treant._state['mdsynthesis']['udef']['universe_kwargs']
+            mdsdict = self._treant._state['mdsynthesis']
+            return mdsdict['udef']['universe_kwargs']
 
     @universe_kwargs.setter
     def universe_kwargs(self, kwargs):
