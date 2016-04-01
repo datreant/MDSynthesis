@@ -18,7 +18,7 @@ The class :class:`mdsynthesis.Sim` is the central object of ``mdsynthesis``.
     :members:
     :inherited-members:
 
-.. _Selections_api:
+.. _UniverseDefinition_api:
 
 UniverseDefinition
 ``````````````````
@@ -28,6 +28,8 @@ define its :class:`MDAnalysis.Universe`.
 .. autoclass:: mdsynthesis.limbs.UniverseDefinition
     :members:
     :inherited-members:
+
+.. _AtomSelections_api:
 
 AtomSelections
 ``````````````

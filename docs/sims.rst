@@ -97,6 +97,10 @@ from its definition, you can force it to reload with::
 
     >>> s.udef.reload()
 
+API Reference: UniverseDefinition
+---------------------------------
+See the :ref:`UniverseDefinition_api` API reference for more details.
+
 
 Storing custom atom selections
 ==============================
@@ -110,8 +114,58 @@ selection of atoms, e.g. the "solvent", might require a different set of
 strings.
 
 To make this more manageable, we can store custom atom selections within our
-Sim. Say we want all the 
+Sim. Say we want to select the lid, core, and NMP domains of adenylate
+kinase, the protein we simulated. We can store these immediately::
 
+    >>> s.atomselections['lid'] = 'resid 122:159'
+    >>> s.atomselections['nmp'] = 'resid 30:59'
+    >>> s.atomselections['core'] = ['resid 1:29', 'resid 60:121', 'resid 160:214']
+
+We can now get new AtomGroups back for each selection at any time ::
+
+    >>> s.atomselections['lid']
+    <AtomGroup with 598 atoms>
+    
+    >>> s.atomselections['core']
+    <AtomGroup with 2306 atoms>
+
+and we don't have to remember or know how 'lid' or 'core' are defined for this
+particular system. If we have other simulations of adenylate kinase performed
+with other molecular dynamics engines or with different forcefields, we can
+store the atom selection strings required for those systems in the same way,
+perhaps using the same names 'lid', 'core', etc. This abstraction allows us to
+work with many variants of a simulation system without getting stuck on the
+details every time.
+
+.. note:: Storing a list of strings as a selection will apply them in order,
+          producing an AtomGroup concatenated from each one in the same way
+          as providing multiple strings to
+          :meth:`~MDAnalysis.core.AtomGroup.AtomGroup.select_atoms` does. This
+          is especially useful when storing selections used for structural
+          alignments.
+
+Want just the selection strings back? We can use
+:meth:`~mdsynthesis.limbs.AtomSelections.define`::
+
+    >>> s.define('lid')
+    ['resid 122:159']
+
+Note that selections are always stored as lists, even if only a single
+selection string was given.
+
+Atom selections from atom indices 
+---------------------------------
+Already have an AtomGroup, and just want to define it according to its atom
+indices instead of as a selection string? We can do that, too::
+
+    >>> lid = s.universe.select_atoms('resid 122:159')
+    >>> s.atomselections['lid'] = lid
+    >>> s.atomselections['lid']
+    <AtomGroup with 598 atoms>
+
+API Reference: AtomSelections
+-----------------------------
+See the :ref:`AtomSelections_api` API reference for more details.
 
 API Reference: Sim
 ==================
