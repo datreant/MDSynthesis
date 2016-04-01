@@ -46,7 +46,7 @@ To install from source, clone the repository and switch to the master branch ::
     cd MDSynthesis
     git checkout master
 
-Installation of the packages is as simple as
+Installation of the packages is as simple as ::
 
     pip install .
 
