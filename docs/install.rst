@@ -30,7 +30,7 @@ Dependencies
 ============
 The dependencies of MDSynthesis are:
 
-- `MDAnalysis`_: 0.15 or higher
+- `MDAnalysis`_: 0.14 or higher
 - `datreant.core`_: 0.6.0 or higher
 - `datreant.data`_: 0.6.0 or higher
 

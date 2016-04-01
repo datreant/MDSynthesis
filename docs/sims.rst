@@ -1,10 +1,11 @@
 ============================================
 Leveraging molecular dynamics data with Sims
 ============================================
-A **Sim** is a :class:`~datreant.core.Treant` with specialized components for
-working with molecular dynamics data. In particular, it can store a definition
-for a :class:`MDAnalysis.Universe` for painless recall, as well as custom atom
-selections.
+A :class:`~mdsynthesis.Sim` is a :class:`~datreant.core.Treant` with
+specialized components for working with molecular dynamics data. In particular,
+it can store a definition for an MDAnalysis
+:class:`~MDAnalysis.core.AtomGroup.Universe` for painless recall, as well as
+custom atom selections.
 
 .. note:: Since Sims are Treants, everything that applies to Treants applies
           to Sims as well. See the `datreant documentation
