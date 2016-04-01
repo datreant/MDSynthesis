@@ -32,10 +32,10 @@ HDF5 format when possible.
 Powered by ``datreant`` under the hood
 --------------------------------------
 MDSynthesis is built on top of the general-purpose `datreant`_ library.  The
-Sim is a :ref:`~datreant.core.Treant` with special features for working with
-molecular dynamics data, but every feature of datreant applies to MDSynthesis.
+Sim is a `Treant`_ with special features for working with molecular dynamics
+data, but every feature of datreant applies to MDSynthesis.
 
-.. _`datreant`: http://datreant.org/
+.. _Treant: http://datreant.readthedocs.org/en/latest/treants.html
 
 Documentation
 =============
@@ -50,7 +50,7 @@ edges and bugs. Issues and pull requests welcome!
 MDSynthesis follows the development model of `datreant`_; see the
 `contributor's guide`_ to learn how to get started with contributing back.
 
-.. _`datreant`: http://datreant.readthedocs.org/
+.. _datreant: http://datreant.readthedocs.org/
 .. _`contributor's guide`: http://datreant.readthedocs.org/en/latest/contributing.html
 
 .. |docs| image:: https://readthedocs.org/projects/mdsynthesis/badge/?version=develop
