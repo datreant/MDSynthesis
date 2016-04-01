@@ -147,7 +147,7 @@ details every time.
 Want just the selection strings back? We can use
 :meth:`~mdsynthesis.limbs.AtomSelections.define`::
 
-    >>> s.define('lid')
+    >>> s.atomselections.define('lid')
     ['resid 122:159']
 
 Note that selections are always stored as lists, even if only a single
