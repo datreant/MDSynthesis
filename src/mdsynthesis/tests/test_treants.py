@@ -55,6 +55,11 @@ class TestSim(TestTreant):
             assert treant.udef.topology == GRO
             assert treant.udef.trajectory == XTC
 
+        def test_add_univese_typeerror(self, treant):
+            """Test checking of what is passed to setter"""
+            with pytest.raises(TypeError):
+                treant.universe = 72
+
         def test_remove_universe(self, treant):
             """Test universe removal"""
             treant.udef.topology = GRO
