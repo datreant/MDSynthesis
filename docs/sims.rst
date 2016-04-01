@@ -3,7 +3,7 @@ Leveraging molecular dynamics data with Sims
 ============================================
 A **Sim** is a :class:`~datreant.core.Treant` with specialized components for
 working with molecular dynamics data. In particular, it can store a definition
-for a :class:`MDAnalysis.Universe` for painless recall, as well as custom atom
+for an :class:`MDAnalysis.Universe` for painless recall, as well as custom atom
 selections.
 
 .. note:: Since Sims are Treants, everything that applies to Treants applies
@@ -29,24 +29,24 @@ And we can immediately give the Sim characteristics like :ref:`tags
 and :ref:`categories <datreantcore:Categories_guide>`::
 
     >>> s.categories['sampling method'] = 'DIMS'
-    >>> s.categories['sampling '] = 'heay atom'
-    <Categories({'sampling ': 'heay atom', 'sampling method': 'DIMS'})>
+    >>> s.categories['sampling '] = 'heavy atom'
+    <Categories({'sampling ': 'heavy atom', 'sampling method': 'DIMS'})>
 
-These can be used later to filter and group Sims when we have many to work
+These can be used later to filter and aggregate Sims when we have many to work
 with. They can also be used as switches for analysis code, since we may need to
-do different things depending on e.g. the type of sampling method used to
+do different things depending on, for example, the type of sampling method used to
 produce the trajectory.
 
 Defining the Universe
 =====================
-What makes a Sim different from a basic Treant is that it can store a
+What makes a Sim different from a basic Treant is that it can store an
 :class:`MDAnalysis.Universe` definition. We can access the Sim's Universe
 directly with::
 
     >>> s.universe
 
-but doing so now gives back ``None``. However, if we define a topology for the
-Universe with::
+At this point, we get back ``None``. However, if we define a topology for the
+Universe with
 
     >>> s.udef.topology = 'path/to/topology.psf'
 
@@ -55,17 +55,17 @@ then we get back a Universe built with this topology instead::
     >>> s.universe
     <Universe with 3341 atoms and 3365 bonds>
 
-we can also add a trajectory::
+We can also add a trajectory::
 
     >>> s.udef.trajectory = 'path/to/trajectory.dcd'
 
-and our Universe is re-initialized with both the defined topology and trajectory::
+which re-initializes the Universe with both the defined topology and trajectory::
 
     >>> s.universe.trajectory
     <DCDReader /home/bob/research/path/to/trajectory.dcd with 98 frames of 3341 atoms>
 
-We can define our Universe as having multiple trajectories by giving a list of
-paths instead, and this will work as well. Internally, the Universe generated
+We can also define our Universe as having multiple trajectories by giving a list of
+filepaths instead. Internally, the Universe generated
 will use the :class:`MDAnalysis.coordinates.base.ChainReader` for treating the
 trajectories as a contiguous whole.
 
@@ -105,16 +105,16 @@ See the :ref:`UniverseDefinition_api` API reference for more details.
 Storing custom atom selections
 ==============================
 MDAnalysis includes its own selection language for extracting
-:class:`~MDAnalysis.core.AtomGroup.AtomGroup` objects, which function as an
-ordered list of atoms from the system. The selection strings needed to specify
+:class:`~MDAnalysis.core.AtomGroup.AtomGroup` objects, which function as
+ordered lists of (selected) atoms from the system. The selection strings needed to specify
 these can be long and complex, and sometimes multiple selection strings are
 required in a particular order to extract a given AtomGroup from all the atoms
-in the Universe. What's more, for different simulation systems the same
-selection of atoms, e.g. the "solvent", might require a different set of
-strings.
+in the Universe. Moreover, given different simulation systems, the same
+selection of atoms (e.g. the "solvent") might require a different set of
+selection strings.
 
-To make this more manageable, we can store custom atom selections within our
-Sim. Say we want to select the lid, core, and NMP domains of adenylate
+Fortunately, Sims provide a mechanism for storing (many) atom selections.
+Say we want to select the LID, CORE, and NMP domains of adenylate
 kinase, the protein we simulated. We can store these immediately::
 
     >>> s.atomselections['lid'] = 'resid 122:159'
@@ -134,8 +134,7 @@ particular system. If we have other simulations of adenylate kinase performed
 with other molecular dynamics engines or with different forcefields, we can
 store the atom selection strings required for those systems in the same way,
 perhaps using the same names 'lid', 'core', etc. This abstraction allows us to
-work with many variants of a simulation system without getting stuck on the
-details every time.
+work with many variants of a simulation system without having to micromanage.
 
 .. note:: Storing a list of strings as a selection will apply them in order,
           producing an AtomGroup concatenated from each one in the same way
@@ -155,8 +154,8 @@ selection string was given.
 
 Atom selections from atom indices 
 ---------------------------------
-Already have an AtomGroup, and just want to define it according to its atom
-indices instead of as a selection string? We can do that, too::
+Do you already have an AtomGroup and prefer to define it according to its atom
+indices instead of as a selection string? That can be done, too::
 
     >>> lid = s.universe.select_atoms('resid 122:159')
     >>> s.atomselections['lid'] = lid
