@@ -40,9 +40,9 @@ produce the trajectory.
 
 Defining the Universe
 =====================
-What makes a Sim different from a basic Treant is that it can store a
-:class:`MDAnalysis.Universe` definition. We can access the Sim's Universe
-directly with::
+What makes a Sim different from a basic Treant is that it can store an
+MDAnalysis :class:`~MDAnalysis.core.AtomGroup.Universe` definition. We can
+access the Sim's Universe directly with::
 
     >>> s.universe
 
@@ -67,8 +67,8 @@ and our Universe is re-initialized with both the defined topology and trajectory
 
 We can define our Universe as having multiple trajectories by giving a list of
 paths instead, and this will work as well. Internally, the Universe generated
-will use the :class:`MDAnalysis.coordinates.base.ChainReader` for treating the
-trajectories as a contiguous whole.
+will use the MDAnalysis :class:`~MDAnalysis.coordinates.base.ChainReader` for
+treating the trajectories as a contiguous whole.
 
 The Universe definition is persistent, so we can get back an identical Universe
 later from another Python session with our Sim::
