@@ -5,11 +5,11 @@ Since MDSynthesis requires ``datreant.data``, which uses HDF5 as the file
 format of choice for persistence, you will first need to install the HDF5
 libraries either using your package manager or manually. 
 
-On Ubuntu 14.04 this will be ::
+On **Ubuntu 14.04** this will be ::
 
     apt-get install libhdf5-serial-1.8.4 libhdf5-serial-dev
 
-and on Arch Linux ::
+and on **Arch Linux** ::
    
     pacman -S hdf5
 
@@ -23,8 +23,8 @@ directory::
 
     pip install --user mdsynthesis
 
-Some dependencies may require ``numpy`` and/or Cython to be installed
-beforehand, so be aware that installing those first may be necessary.
+Be aware that some dependencies may require ``numpy`` and/or Cython to
+be installed beforehand!
 
 Dependencies
 ============
@@ -46,12 +46,12 @@ To install from source, clone the repository and switch to the master branch ::
     cd MDSynthesis
     git checkout master
 
-Installation of the packages is as simple as ::
+Installation of the packages is as simple as
 
     pip install .
 
-This installs ``mdsynthesis`` in the system wide python directory; this may
-require administrative privileges.
+which installs ``mdsynthesis`` in the system wide python directory (this may
+require administrative privileges).
 
 It is also possible to use ``--user`` to install into your user's site-packages
 directory::
