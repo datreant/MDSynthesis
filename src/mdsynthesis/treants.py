@@ -89,7 +89,7 @@ class Sim(Treant):
             raise TypeError("Cannot set to {}; must be Universe".format(
                                 type(universe)))
 
-        self.topology = universe.filename
+        self.udef.topology = universe.filename
         try:
             traj = universe.trajectory.filename
         except AttributeError:
@@ -98,7 +98,7 @@ class Sim(Treant):
             except AttributeError:
                 traj = None
 
-        self.trajectory = traj
+        self.udef.trajectory = traj
 
         # finally, just use this instance
         self._universe = universe

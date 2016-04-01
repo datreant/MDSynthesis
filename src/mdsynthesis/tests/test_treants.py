@@ -11,7 +11,7 @@ import shutil
 import py
 from datreant.core.tests.test_treants import TestTreant
 
-import MDAnalysis
+import MDAnalysis as mda
 from MDAnalysisTests.datafiles import PDB, GRO, XTC
 
 
@@ -38,17 +38,29 @@ class TestSim(TestTreant):
             treant.udef.topology = GRO
             treant.udef.trajectory = XTC
 
-            assert isinstance(treant.universe, MDAnalysis.Universe)
+            assert isinstance(treant.universe, mda.Universe)
 
             assert treant.universe.filename == GRO
             assert treant.universe.trajectory.filename == XTC
+
+        def test_set_universe(self, treant):
+            """Test setting the universe with a Universe object"""
+
+            u = mda.Universe(GRO, XTC)
+
+            # set the universe directly
+            treant.universe = u
+
+            assert isinstance(treant.universe, mda.Universe)
+            assert treant.udef.topology == GRO
+            assert treant.udef.trajectory == XTC
 
         def test_remove_universe(self, treant):
             """Test universe removal"""
             treant.udef.topology = GRO
             treant.udef.trajectory = XTC
 
-            assert isinstance(treant.universe, MDAnalysis.Universe)
+            assert isinstance(treant.universe, mda.Universe)
 
             treant.udef.topology = None
             assert treant.udef.topology is None
@@ -60,13 +72,13 @@ class TestSim(TestTreant):
             # this should give us a universe again
             treant.udef.topology = PDB
 
-            assert isinstance(treant.universe, MDAnalysis.Universe)
+            assert isinstance(treant.universe, mda.Universe)
 
             # removing trajectories should keep universe, but with PDB as
             # coordinates
             treant.udef.trajectory = None
 
-            assert isinstance(treant.universe, MDAnalysis.Universe)
+            assert isinstance(treant.universe, mda.Universe)
             assert treant.universe.trajectory.n_frames == 1
 
         def test_set_resnums(self, treant):
@@ -235,7 +247,7 @@ class TestReadOnly:
     def test_sim_universe_access(self, sim):
         """Test that Sim can access Universe when read-only.
         """
-        assert isinstance(sim.universe, MDAnalysis.Universe)
+        assert isinstance(sim.universe, mda.Universe)
 
     def test_sim_moved_universe_access(self, sim, tmpdir):
         """Test that Sim can access Universe when read-only, especially
@@ -245,6 +257,6 @@ class TestReadOnly:
         sim.location = tmpdir.mkdir('test').strpath
         py.path.local(sim.abspath).chmod(0550, rec=True)
 
-        assert isinstance(sim.universe, MDAnalysis.Universe)
+        assert isinstance(sim.universe, mda.Universe)
 
         py.path.local(sim.abspath).chmod(0770, rec=True)
