@@ -20,12 +20,12 @@ The class :class:`mdsynthesis.Sim` is the central object of ``mdsynthesis``.
 
 .. _Selections_api:
 
-Udef
-````
-The class :class:`mdsynthesis.limbs.Udef` is the interface used by a Sim to
+UniverseDefinition
+``````````````````
+The class :class:`mdsynthesis.limbs.UniverseDefinition` is the interface used by a Sim to
 define its :class:`MDAnalysis.Universe`.
 
-.. autoclass:: mdsynthesis.limbs.Udef
+.. autoclass:: mdsynthesis.limbs.UniverseDefinition
     :members:
     :inherited-members:
 

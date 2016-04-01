@@ -37,7 +37,7 @@ class UniverseDefinition(Limb):
 
         subitems = {'topology': dict,
                     'trajectory': list,
-                    'universe_kwargs': dict}
+                    'kwargs': dict}
 
         # init state if for udef not already there;
         # if read-only, check that it is there,
@@ -80,10 +80,10 @@ class UniverseDefinition(Limb):
         trajectory = paths['traj']
 
         if not trajectory:
-            self._treant._universe = Universe(topology, **self.universe_kwargs)
+            self._treant._universe = Universe(topology, **self.kwargs)
         else:
             self._treant._universe = Universe(topology, *trajectory,
-                                              **self.universe_kwargs)
+                                              **self.kwargs)
 
         self._apply_resnums()
 
@@ -98,7 +98,7 @@ class UniverseDefinition(Limb):
                 "Cannot update paths for universe; "
                 " state file is read-only.")
 
-    def reload_universe(self):
+    def reload(self):
         """Re-load the universe from its stored definition.
 
         """
@@ -277,7 +277,7 @@ class UniverseDefinition(Limb):
         return outtop[pathtype], outtraj[pathtype]
 
     @property
-    def universe_kwargs(self):
+    def kwargs(self):
         """The keyword arguments applied to the Sim's universe when building
         it.
 
@@ -288,16 +288,16 @@ class UniverseDefinition(Limb):
         """
         with self._treant._read:
             mdsdict = self._treant._state['mdsynthesis']
-            return mdsdict['udef']['universe_kwargs']
+            return mdsdict['udef']['kwargs']
 
-    @universe_kwargs.setter
-    def universe_kwargs(self, kwargs):
+    @kwargs.setter
+    def kwargs(self, kwargs):
         if not isinstance(kwargs, dict):
             raise TypeError("Must be a dictionary")
 
         with self._treant._write:
             simdict = self._treant._state['mdsynthesis']['udef']
-            simdict['universe_kwargs'] = kwargs
+            simdict['kwargs'] = kwargs
 
 
 class AtomSelections(Limb):
@@ -331,7 +331,7 @@ class AtomSelections(Limb):
                                                   self._treant.filepath)))
 
     def __repr__(self):
-        return "<Selections({})>".format(
+        return "<AtomSelections({})>".format(
                 {x: self.define(x) for x in self.keys()})
 
     def __str__(self):

@@ -36,6 +36,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'sphinx.ext.coverage',
+    'sphinx.ext.autosummary',
     'sphinx.ext.napoleon',
 ]
 
@@ -298,6 +299,7 @@ napoleon_use_rtype = True
 # intersphinx mapping to datreant.core docs and others
 intersphinx_mapping = {'http://docs.python.org/': None,
                        'datreantcore': ('http://datreant.readthedocs.org/en/master/', None),
-                       'datreantdata': ('http://datreantdata.readthedocs.org/en/master/', None)}
+                       'datreantdata': ('http://datreantdata.readthedocs.org/en/master/', None),
+                       'MDAnalysis': ('http://pythonhosted.org/MDAnalysis/', None)}
 
 

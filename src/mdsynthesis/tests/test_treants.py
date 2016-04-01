@@ -80,7 +80,7 @@ class TestSim(TestTreant):
 
             treant.udef._set_resnums(treant.universe.residues.resnums)
 
-            treant.udef.reload_universe()
+            treant.udef.reload()
 
             protein = treant.universe.select_atoms('protein')
             assert (resids + 3 == protein.residues.resnums).all()
@@ -91,7 +91,7 @@ class TestSim(TestTreant):
             assert (protein.residues.resnums == resids + 6).all()
             treant.udef._set_resnums(treant.universe.residues.resnums)
 
-            treant.udef.reload_universe()
+            treant.udef.reload()
 
             protein = treant.universe.select_atoms('protein')
             assert (resids + 6 == protein.residues.resnums).all()

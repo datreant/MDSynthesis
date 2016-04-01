@@ -4,23 +4,20 @@ MDSynthesis: a persistence engine for molecular dynamics data
 
 |zen| |docs| |build| |cov|
 
-Although the raw data for any study involving molecular dynamics simulations are
-the full trajectories themselves, often we are most interested in
-lower-dimensional measures of what is happening. These measures may be as simple
-as the distance between two specific atoms, or as complex as the percentage of
-contacts relative to some native structure. In any case, it may be time-consuming
-to obtain these lower-dimensional intermediate data, and so it is useful to store
-them.
+As computing power increases, it is now possible to produce hundreds of
+molecular dynamics simulation trajectories that vary widely in length,
+system size, composition, starting conditions, and other parameters. Managing
+this complexity in ways that allow use of the data to answer scientific
+questions has itself become a bottleneck. MDSynthesis is an answer to this
+problem.
 
-Stay organized
-==============
-MDSynthesis is designed to perform the logistics of medium-to-large-scale
-analysis of many trajectories, individually or as entire groups. It should
-allow the scientist to operate at a high level when working with the data,
-while MDSynthesis handles the details of storing and recalling this data.
-
-In other words, MDSynthesis lets the computer do the boring work of keeping
-track of where things are and how they are stored.
+Built on top of `datreant`_, MDSynthesis gives a Pythonic interface to
+molecular dynamics trajectories using `MDAnalysis`_, giving the ability to work
+with the data from many simulations scattered throughout the filesystem
+with ease. It makes it possible to write analysis code that can work across
+many varieties of simulation, but even more importantly, MDSynthesis allows
+interactive work with the results from hundreds of simulations at once without
+much effort. 
 
 Efficiently store intermediate data from individual simulations for easy recall
 -------------------------------------------------------------------------------
