@@ -63,7 +63,7 @@ class TestSim(TestTreant):
 
             assert treant.universe.filename == PSF
             assert treant.udef.topology == PSF
-            assert treant.udef.trajectory == None
+            assert treant.udef.trajectory is None
 
         def test_set_universe_chainreader(self, treant):
             """Test setting the Universe to multiple file trajectory (chain)"""
