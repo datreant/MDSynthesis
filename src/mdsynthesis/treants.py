@@ -90,12 +90,12 @@ class Sim(Treant):
                                 type(universe)))
 
         self.udef.topology = universe.filename
-        try:
-            traj = universe.trajectory.filename
+        try:  # ChainReader?
+            traj = universe.trajectory.filenames
         except AttributeError:
-            try:
-                traj = universe.trajectory.filenames
-            except AttributeError:
+            try:  # Reader?
+                traj = universe.trajectory.filename
+            except AttributeError:  # Only topology
                 traj = None
 
         self.udef.trajectory = traj
