@@ -12,7 +12,7 @@ import py
 from datreant.core.tests.test_treants import TestTreant
 
 import MDAnalysis as mda
-from MDAnalysisTests.datafiles import PDB, GRO, XTC
+from MDAnalysisTests.datafiles import PDB, GRO, XTC, PSF
 
 
 class TestSim(TestTreant):
@@ -54,6 +54,16 @@ class TestSim(TestTreant):
             assert isinstance(treant.universe, mda.Universe)
             assert treant.udef.topology == GRO
             assert treant.udef.trajectory == XTC
+
+        def test_set_universe_only_topology(self, treant):
+            """Test setting the Universe to a topology-only universe"""
+            u = mda.Universe(PSF)
+
+            treant.universe = u
+
+            assert treant.universe.filename == PSF
+            assert treant.udef.topology == PSF
+            assert treant.udef.trajectory == None
 
         def test_add_univese_typeerror(self, treant):
             """Test checking of what is passed to setter"""
