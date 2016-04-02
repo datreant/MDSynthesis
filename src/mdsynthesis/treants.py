@@ -54,7 +54,7 @@ class Sim(Treant):
                                   categories=categories,
                                   tags=tags)
 
-        self._udef = None
+        self._udef = limbs.UniverseDefinition(self)
         self._atomselections = None
         self._universe = None     # universe 'dock'
 
@@ -80,7 +80,7 @@ class Sim(Treant):
         if self._universe:
             return self._universe
         else:
-            self.udef._activate()
+            self._udef._activate()
             return self._universe
 
     @universe.setter
@@ -89,7 +89,7 @@ class Sim(Treant):
             raise TypeError("Cannot set to {}; must be Universe".format(
                                 type(universe)))
 
-        self.udef.topology = universe.filename
+        self._udef.topology = universe.filename
         try:
             traj = universe.trajectory.filename
         except AttributeError:
@@ -98,22 +98,12 @@ class Sim(Treant):
             except AttributeError:
                 traj = None
 
-        self.udef.trajectory = traj
+        self._udef.trajectory = traj
+
+        self._udef.kwargs = universe._kwargs
 
         # finally, just use this instance
         self._universe = universe
-
-    @property
-    def udef(self):
-        """The universe definition for this Sim.
-
-        """
-        # attach universe if not attached, and only give results if a
-        # universe is present thereafter
-        if not self._udef:
-            self._udef = limbs.UniverseDefinition(self)
-
-        return self._udef
 
     @property
     def atomselections(self):

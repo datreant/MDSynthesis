@@ -29,7 +29,7 @@ class UniverseDefinition(Limb):
     this universe directly available via ``Sim.atomselections``.
 
     """
-    _name = 'udef'
+    _name = '_udef'
     _filepaths = ['abs', 'rel']
 
     def __init__(self, treant):
@@ -294,6 +294,14 @@ class UniverseDefinition(Limb):
     def kwargs(self, kwargs):
         if not isinstance(kwargs, dict):
             raise TypeError("Must be a dictionary")
+
+        # check that values are serializable
+        for key, value in kwargs.items():
+            if not (isinstance(value, (string_types, bool, int, float)) or
+                    value is None):
+                raise ValueError("Cannot store keyword '{}' for Universe; "
+                                 "value must be a string, bool, int, float, "
+                                 "or None, not '{}'".format(key, type(value)))
 
         with self._treant._write:
             simdict = self._treant._state['mdsynthesis']['udef']
