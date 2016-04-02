@@ -65,6 +65,15 @@ class TestSim(TestTreant):
             assert treant.udef.topology == PSF
             assert treant.udef.trajectory == None
 
+        def test_set_universe_chainreader(self, treant):
+            """Test setting the Universe to multiple file trajectory (chain)"""
+            u = mda.Universe(GRO, [XTC, XTC])
+
+            treant.universe = u
+
+            assert treant.udef.topology == GRO
+            assert treant.udef.trajectory == [XTC, XTC]
+
         def test_add_univese_typeerror(self, treant):
             """Test checking of what is passed to setter"""
             with pytest.raises(TypeError):
