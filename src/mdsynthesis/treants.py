@@ -69,10 +69,8 @@ class Sim(Treant):
         for this universe directly available via ``Sim.selections``.
 
         Setting this to a :class:`MDAnalysis.Universe` will set that as the
-        universe definition for this Sim. It will not preserve any keyword
-        arguments used to initialize it, however; you will need to add
-        these to :attr:`universe_kwargs` as a dictionary if you want these
-        to apply next time the universe is loaded.
+        universe definition for this Sim. Setting to ``None`` will remove
+        the universe definition entirely.
 
         """
         # TODO: include check for changes to universe definition, not just
@@ -85,30 +83,36 @@ class Sim(Treant):
 
     @universe.setter
     def universe(self, universe):
-        if not isinstance(universe, Universe):
+        if universe is None:
+            self.udef.topology = None
+            self.udef.trajectory = None
+            self.udef.kwargs = None
+            self._universe = None
+
+        elif not isinstance(universe, Universe):
             raise TypeError("Cannot set to {}; must be Universe".format(
                                 type(universe)))
-
-        self.udef.topology = universe.filename
-        try:
-            traj = universe.trajectory.filename
-        except AttributeError:
+        else:
+            self.udef.topology = universe.filename
             try:
-                traj = universe.trajectory.filenames
+                traj = universe.trajectory.filename
             except AttributeError:
-                traj = None
+                try:
+                    traj = universe.trajectory.filenames
+                except AttributeError:
+                    traj = None
 
-        self.udef.trajectory = traj
+            self.udef.trajectory = traj
 
-        # try and store keyword arguments
-        try:
-            self.udef.kwargs = universe._kwargs
-        except AttributeError:
-            warnings.warn("Could not store universe keyword arguments; "
-                          "manually set these with ``Sim.udef.kwargs``")
+            # try and store keyword arguments
+            try:
+                self.udef.kwargs = universe._kwargs
+            except AttributeError:
+                warnings.warn("Could not store universe keyword arguments; "
+                              "manually set these with ``Sim.udef.kwargs``")
 
-        # finally, just use this instance
-        self._universe = universe
+            # finally, just use this instance
+            self._universe = universe
 
     @property
     def udef(self):

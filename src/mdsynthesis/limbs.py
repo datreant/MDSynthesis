@@ -29,7 +29,7 @@ class UniverseDefinition(Limb):
     this universe directly available via ``Sim.atomselections``.
 
     """
-    _name = '_udef'
+    _name = 'udef'
     _filepaths = ['abs', 'rel']
 
     def __init__(self, treant):
