@@ -74,6 +74,21 @@ class TestSim(TestTreant):
             assert treant.udef.topology == GRO
             assert treant.udef.trajectory == [XTC, XTC]
 
+        def test_set_universe_with_kwargs(self, treant):
+            """Universe should preserve its kwargs, if possible.
+
+            Test that setting a Universe for a Sim also gets its kwargs
+            preserved, that an exception is raised for unserializable kwargs,
+            and that a proper warning is geven when the Sim can't get them from
+            the Universe in the first place.
+
+            """
+            u = mda.Universe(PDB, XTC, something_fake=True)
+
+            treant.universe = u
+
+            assert treant.udef.kwargs['something_fake'] is True
+
         def test_add_univese_typeerror(self, treant):
             """Test checking of what is passed to setter"""
             with pytest.raises(TypeError):
