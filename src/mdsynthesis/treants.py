@@ -108,8 +108,8 @@ class Sim(Treant):
             try:
                 self.udef.kwargs = universe._kwargs
             except AttributeError:
-                warnings.warn("Could not store universe keyword arguments; "
-                              "manually set these with ``Sim.udef.kwargs``")
+                warnings.warn("Universe did not keep keyword arguments; "
+                              "cannot store keyword arguments for Universe.")
 
             # finally, just use this instance
             self._universe = universe

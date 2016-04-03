@@ -83,11 +83,24 @@ class TestSim(TestTreant):
             the Universe in the first place.
 
             """
+            # try out a basic, but nonexistent, kwarg
             u = mda.Universe(PDB, XTC, something_fake=True)
 
             treant.universe = u
-
             assert treant.udef.kwargs['something_fake'] is True
+
+            # try a kwarg with a value that won't be serializable
+            u2 = mda.Universe(PDB, XTC,
+                              something_else=mda.topology.GROParser.GROParser)
+
+            with pytest.raises(ValueError):
+                treant.universe = u2
+
+            # check that we get a warning if a Universe didn't store its kwargs
+            u3 = mda.Universe(PDB, XTC, something_fake=True)
+            del u3._kwargs
+            with pytest.warns(UserWarning):
+                treant.universe = u3
 
         def test_add_univese_typeerror(self, treant):
             """Test checking of what is passed to setter"""
