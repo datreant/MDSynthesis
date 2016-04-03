@@ -28,8 +28,8 @@ class TestUniversehound:
             py.path.local(GRO).copy(GRO_t)
             py.path.local(XTC).copy(XTC_t)
 
-            s.udef.topology = GRO_t.strpath
-            s.udef.trajectory = XTC_t.strpath
+            u = MDAnalysis.Universe(GRO_t.strpath, XTC_t.strpath)
+            s.universe = u
         return s
 
     @pytest.fixture
@@ -45,8 +45,8 @@ class TestUniversehound:
             py.path.local(GRO).copy(GRO_t)
             py.path.local(XTC).copy(XTC_t)
 
-            s.udef.topology = GRO_t.strpath
-            s.udef.trajectory = XTC_t.strpath
+            u = MDAnalysis.Universe(GRO_t.strpath, XTC_t.strpath)
+            s.universe = u
         return s
 
     def test_move_Sim_external(self, sim_external, tmpdir):
@@ -57,16 +57,16 @@ class TestUniversehound:
         assert isinstance(sim_external.universe, MDAnalysis.Universe)
 
         sim = sim_external
-        assert sim.universe.filename == sim.udef.topology
-        assert sim.universe.trajectory.filename == sim.udef.trajectory
+        assert sim.universe.filename == sim._udef.topology
+        assert sim.universe.trajectory.filename == sim._udef.trajectory
 
     def test_move_Sim_internal(self, sim_internal, tmpdir):
         sim_internal.location = tmpdir.mkdir('test').strpath
         assert isinstance(sim_internal.universe, MDAnalysis.Universe)
 
         sim = sim_internal
-        assert sim.universe.filename == sim.udef.topology
-        assert sim.universe.trajectory.filename == sim.udef.trajectory
+        assert sim.universe.filename == sim._udef.topology
+        assert sim.universe.trajectory.filename == sim._udef.trajectory
 
     def test_move_Sim_internal_copy(self, sim_internal, tmpdir):
         """We move the whole Sim, including its internal trajectory files, and
@@ -74,11 +74,11 @@ class TestUniversehound:
         be.
         """
         grofile = tmpdir.join(sim_internal.name, 'sub', self.GRO)
-        assert sim_internal.udef.topology == grofile.strpath
+        assert sim_internal._udef.topology == grofile.strpath
 
         sim_internal.location = tmpdir.mkdir('test').strpath
         tmpdir.join('test', sim_internal.name, 'sub', self.GRO).copy(
                 tmpdir.mkdir(sim_internal.name).mkdir('sub'))
 
         with pytest.raises(IOError):
-            sim_internal.universe
+            assert isinstance(sim_internal.universe, MDAnalysis.Universe)

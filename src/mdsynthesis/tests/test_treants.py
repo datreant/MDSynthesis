@@ -33,16 +33,6 @@ class TestSim(TestTreant):
     class TestUniverse:
         """Test universe functionality"""
 
-        def test_add_universe(self, treant):
-            """Test adding a new unverse definition"""
-            treant.udef.topology = GRO
-            treant.udef.trajectory = XTC
-
-            assert isinstance(treant.universe, mda.Universe)
-
-            assert treant.universe.filename == GRO
-            assert treant.universe.trajectory.filename == XTC
-
         def test_set_universe(self, treant):
             """Test setting the universe with a Universe object"""
 
@@ -52,8 +42,8 @@ class TestSim(TestTreant):
             treant.universe = u
 
             assert isinstance(treant.universe, mda.Universe)
-            assert treant.udef.topology == GRO
-            assert treant.udef.trajectory == XTC
+            assert treant.universe.filename == GRO
+            assert treant.universe.trajectory.filename == XTC
 
         def test_add_univese_typeerror(self, treant):
             """Test checking of what is passed to setter"""
@@ -62,34 +52,37 @@ class TestSim(TestTreant):
 
         def test_remove_universe(self, treant):
             """Test universe removal"""
-            treant.udef.topology = GRO
-            treant.udef.trajectory = XTC
+            u = mda.Universe(GRO, XTC)
+
+            treant.universe = u
 
             assert isinstance(treant.universe, mda.Universe)
+            assert treant.universe.filename == GRO
+            assert treant.universe.trajectory.filename == XTC
 
-            treant.udef.topology = None
-            assert treant.udef.topology is None
+            del treant.universe
+
             assert treant.universe is None
 
             # trajectory definition should still be there
-            assert treant.udef.trajectory
+            assert treant._udef.trajectory
 
             # this should give us a universe again
-            treant.udef.topology = PDB
+            treant._udef.topology = PDB
 
             assert isinstance(treant.universe, mda.Universe)
 
             # removing trajectories should keep universe, but with PDB as
             # coordinates
-            treant.udef.trajectory = None
+            treant._udef.trajectory = None
 
             assert isinstance(treant.universe, mda.Universe)
             assert treant.universe.trajectory.n_frames == 1
 
         def test_set_resnums(self, treant):
             """Test that we can add resnums to a universe."""
-            treant.udef.topology = GRO
-            treant.udef.trajectory = XTC
+            u = mda.Universe(GRO, XTC)
+            treant.universe = u
 
             protein = treant.universe.select_atoms('protein')
             resids = protein.residues.resids
@@ -119,9 +112,8 @@ class TestSim(TestTreant):
         def treant(self, tmpdir):
             with tmpdir.as_cwd():
                 s = mds.Sim(TestSim.treantname)
-
-                s.udef.topology = GRO
-                s.udef.trajectory = XTC
+                u = mda.Universe(GRO, XTC)
+                s.universe = u
             return s
 
         def test_add_selection(self, treant):
@@ -237,8 +229,8 @@ class TestReadOnly:
             py.path.local(GRO).copy(GRO_t)
             py.path.local(XTC).copy(XTC_t)
 
-            c.udef.topology = GRO_t.strpath
-            c.udef.trajectory = XTC_t.strpath
+            u = mda.Universe(GRO_t.strpath, XTC_t.strpath)
+            c.universe = u
 
             py.path.local(c.abspath).chmod(0550, rec=True)
 
