@@ -46,29 +46,14 @@ access the Sim's Universe directly with::
 
     >>> s.universe
 
-At this point, we get back ``None``. However, if we define a topology for the
-Universe with
+At this point, we get back ``None``. However, we can define the Sim's Universe
+by giving it one direclty::
 
-    >>> s.udef.topology = 'path/to/topology.psf'
-
-then we get back a Universe built with this topology instead::
-
+    >>> import MDAnalysis as mda
+    >>> s.universe = mda.Universe('path/to/topology.psf',
+                                  'path/to/trajectory.dcd')
     >>> s.universe
     <Universe with 3341 atoms and 3365 bonds>
-
-We can also add a trajectory::
-
-    >>> s.udef.trajectory = 'path/to/trajectory.dcd'
-
-which re-initializes the Universe with both the defined topology and trajectory::
-
-    >>> s.universe.trajectory
-    <DCDReader /home/bob/research/path/to/trajectory.dcd with 98 frames of 3341 atoms>
-
-We can also define our Universe as having multiple trajectories by giving a
-list of filepaths instead. Internally, the Universe generated will use the
-MDAnalysis :class:`~MDAnalysis.coordinates.base.ChainReader` for treating the
-trajectories as a contiguous whole.
 
 The Universe definition is persistent, so we can get back an identical Universe
 later from another Python session with our Sim::
@@ -77,6 +62,36 @@ later from another Python session with our Sim::
     >>> s = mds.Sim('adk')
     >>> s.universe
     <Universe with 3341 atoms and 3365 bonds>
+
+
+Changing the Universe definition
+--------------------------------
+.. warning:: This interface may be removed in a future release, but remains for
+             now due to limitations in MDAnalysis. It is encouraged to set the
+             Universe definition directly as shown above.
+
+We can directly change the topology used for the Sim's Universe with :: 
+
+    >>> s.universedef.topology = 'path/to/another/topology.psf'
+
+then we get back a Universe built with this topology instead::
+
+    >>> s.universe.filename
+    '/home/bob/research/path/to/another/topology.psf'
+
+We can also change the trajectory::
+
+    >>> s.universedef.trajectory = 'path/to/another/trajectory.dcd'
+
+which re-initializes the Universe with both the defined topology and trajectory::
+
+    >>> s.universe.trajectory
+    <DCDReader /home/bob/research/path/to/another/trajectory.dcd with 98 frames of 3341 atoms>
+
+We can also define our Universe as having multiple trajectories by giving a
+list of filepaths instead. Internally, the Universe generated will use the
+MDAnalysis :class:`~MDAnalysis.coordinates.base.ChainReader` for treating the
+trajectories as a contiguous whole.
 
 .. note:: Changing the topology or trajectory definition will reload the
           Universe automatically. This means that any AtomGroups you are
@@ -89,14 +104,14 @@ If the Universe needed requires keyword arguments on initialization, these can
 be stored as well. For example, if our topology was a PDB file and we wanted
 bonds to be guessed upfront, we could make this happen every time::
 
-    >>> s.udef.kwargs = {'guess_bonds': True}
+    >>> s.universedef.kwargs = {'guess_bonds': True}
 
 Reinitializing the Universe
 ---------------------------
 If you make modifications to the Universe but you want to restore the original
 from its definition, you can force it to reload with::
 
-    >>> s.udef.reload()
+    >>> s.universedef.reload()
 
 API Reference: UniverseDefinition
 ---------------------------------
@@ -120,14 +135,15 @@ kinase, the protein we simulated. We can store these immediately::
 
     >>> s.atomselections['lid'] = 'resid 122:159'
     >>> s.atomselections['nmp'] = 'resid 30:59'
-    >>> s.atomselections['core'] = ['resid 1:29', 'resid 60:121', 'resid 160:214']
+    >>> s.atomselections['core'] = ('resid 1:29', 'resid 60:121', 'resid 160:214')
 
-We can now get new AtomGroups back for each selection at any time ::
+We can now get new AtomGroups back for each selection at any time with the 
+:meth:`~mdsynthesis.limbs.AtomSelections.create` method::
 
-    >>> s.atomselections['lid']
+    >>> s.atomselections.create('lid')
     <AtomGroup with 598 atoms>
     
-    >>> s.atomselections['core']
+    >>> s.atomselections.create('core')
     <AtomGroup with 2306 atoms>
 
 and we don't have to remember or know how 'lid' or 'core' are defined for this
@@ -145,13 +161,14 @@ work with many variants of a simulation system without having to micromanage.
           alignments.
 
 Want just the selection strings back? We can use
-:meth:`~mdsynthesis.limbs.AtomSelections.define`::
+:meth:`~mdsynthesis.limbs.AtomSelections.get`::
 
-    >>> s.atomselections.define('lid')
-    ['resid 122:159']
+    >>> s.atomselections.get('lid')
+    'resid 122:159'
 
-Note that selections are always stored as lists, even if only a single
-selection string was given.
+    # or using getitem syntax
+    >>> s.atomselections['lid']
+    'resid 122:159'
 
 Atom selections from atom indices 
 ---------------------------------
@@ -159,9 +176,13 @@ Do you already have an AtomGroup and prefer to define it according to its atom
 indices instead of as a selection string? That can be done, too::
 
     >>> lid = s.universe.select_atoms('resid 122:159')
-    >>> s.atomselections['lid'] = lid
-    >>> s.atomselections['lid']
+    >>> s.atomselections['lid'] = lid.indices
+    >>> s.atomselections.create('lid')
     <AtomGroup with 598 atoms>
+
+Lists/tuples of selection strings or atom indices can be stored in any combination
+as a selection. These are applied in order to yield the AtomGroup when calling the 
+:meth:`~mdsynthesis.limbs.AtomSelections.create` method.
 
 API Reference: AtomSelections
 -----------------------------
