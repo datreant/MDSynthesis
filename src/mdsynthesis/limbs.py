@@ -29,7 +29,7 @@ class UniverseDefinition(Limb):
     this universe directly available via ``Sim.atomselections``.
 
     """
-    _name = 'udef'
+    _name = 'universedef'
     _filepaths = ['abs', 'rel']
 
     def __init__(self, treant):
@@ -114,7 +114,8 @@ class UniverseDefinition(Limb):
 
         """
         with self._treant._read:
-            topstate = self._treant._state['mdsynthesis']['udef']['topology']
+            mdsdict = self._treant._state['mdsynthesis']
+            topstate = mdsdict['universedef']['topology']
 
             if not topstate:
                 return None
@@ -140,10 +141,11 @@ class UniverseDefinition(Limb):
 
     def _set_topology(self, path):
         with self._treant._write:
-            topstate = self._treant._state['mdsynthesis']['udef']['topology']
+            mdsdict = self._treant._state['mdsynthesis']
+            topstate = mdsdict['universedef']['topology']
 
             if path is None:
-                self._treant._state['mdsynthesis']['udef']['topology'] = dict()
+                mdsdict['universedef']['topology'] = dict()
             else:
                 topstate['abspath'] = os.path.abspath(path)
                 topstate['relpath'] = os.path.relpath(path,
@@ -161,13 +163,14 @@ class UniverseDefinition(Limb):
 
         """
         with self._treant._read:
-            traj = self._treant._state['mdsynthesis']['udef']['trajectory']
+            mdsdict = self._treant._state['mdsynthesis']
+            traj = mdsdict['universedef']['trajectory']
             if not traj:
                 return None
             elif len(traj) == 1:
                 return traj[0][0]
             else:
-                return [t[0] for t in traj]
+                return tuple([t[0] for t in traj])
 
     @trajectory.setter
     def trajectory(self, path):
@@ -191,9 +194,9 @@ class UniverseDefinition(Limb):
 
     def _set_trajectory(self, trajs):
         with self._treant._write:
-            self._treant._state['mdsynthesis']['udef']['trajectory'] = []
             mdsdict = self._treant._state['mdsynthesis']
-            trajstate = mdsdict['udef']['trajectory']
+            mdsdict['universedef']['trajectory'] = []
+            trajstate = mdsdict['universedef']['trajectory']
 
             for traj in trajs:
                 trajstate.append(
@@ -205,7 +208,7 @@ class UniverseDefinition(Limb):
 
         """
         with self._treant._read:
-            simdict = self._treant._state['mdsynthesis']['udef']
+            simdict = self._treant._state['mdsynthesis']['universedef']
             try:
                 resnums = simdict['resnums']
             except KeyError:
@@ -232,7 +235,7 @@ class UniverseDefinition(Limb):
                 resnum definition
         """
         with self._treant._write:
-            simdict = self._treant._state['mdsynthesis']['udef']
+            simdict = self._treant._state['mdsynthesis']['universedef']
             if resnums is None:
                 simdict['resnums'] = None
             else:
@@ -263,11 +266,12 @@ class UniverseDefinition(Limb):
 
         """
         with self._treant._read:
-            top = self._treant._state['mdsynthesis']['udef']['topology']
+            mdsdict = self._treant._state['mdsynthesis']
+            top = mdsdict['universedef']['topology']
             outtop = {'abs': top['abspath'],
                       'rel': top['relpath']}
 
-            trajs = self._treant._state['mdsynthesis']['udef']['trajectory']
+            trajs = mdsdict['universedef']['trajectory']
             outtraj = {key: [] for key in self._filepaths}
 
         for traj in trajs:
@@ -288,23 +292,26 @@ class UniverseDefinition(Limb):
         """
         with self._treant._read:
             mdsdict = self._treant._state['mdsynthesis']
-            return mdsdict['udef']['kwargs']
+            return mdsdict['universedef']['kwargs']
 
     @kwargs.setter
     def kwargs(self, kwargs):
-        if not isinstance(kwargs, dict):
-            raise TypeError("Must be a dictionary")
-
-        # check that values are serializable
-        for key, value in kwargs.items():
-            if not (isinstance(value, (string_types, bool, int, float)) or
-                    value is None):
-                raise ValueError("Cannot store keyword '{}' for Universe; "
-                                 "value must be a string, bool, int, float, "
-                                 "or None, not '{}'".format(key, type(value)))
+        if kwargs is None:
+            pass
+        elif isinstance(kwargs, dict):
+            # check that values are serializable
+            for key, value in kwargs.items():
+                if not (isinstance(value, (string_types, bool, int, float)) or
+                        value is None):
+                    raise ValueError("Cannot store keyword '{}' for Universe; "
+                                     "value must be a string, bool, int, "
+                                     "float, or ``None``, "
+                                     "not '{}'".format(key, type(value)))
+        else:
+            raise TypeError("Must be a dictionary or ``None``")
 
         with self._treant._write:
-            simdict = self._treant._state['mdsynthesis']['udef']
+            simdict = self._treant._state['mdsynthesis']['universedef']
             simdict['kwargs'] = kwargs
 
 
@@ -340,53 +347,29 @@ class AtomSelections(Limb):
 
     def __repr__(self):
         return "<AtomSelections({})>".format(
-                {x: self.define(x) for x in self.keys()})
-
-    def __str__(self):
-        selections = self.keys()
-        agg = "Selections"
-        majsep = "="
-        minsep = "-"
-        subsep = "| "
-        seplength = len(agg)
-
-        if not self._treant._uname:
-            out = "No universe attached; no Selections to show"
-        elif not selections:
-            out = "No selections for universe '{}'".format(
-                self._treant._uname)
-        else:
-            out = agg + '\n'
-            out = out + majsep * seplength + '\n'
-            for selection in selections:
-                out = out + "'{}'\n".format(selection)
-                for item in self.define(selection):
-                    out = out + subsep + "'{}'\n".format(item)
-                out = out + minsep * seplength + '\n'
-
-        return out
+                {x: self.get(x) for x in self.keys()})
 
     def __getitem__(self, handle):
-        """Get selection as an AtomGroup for given handle and the universe.
+        """Get selection for given handle.
 
         Parameters
         ----------
         handle : str
-            Name of selection to return as an AtomGroup.
+            Name of selection to return.
 
         Returns
         -------
-        AtomGroup
-            The named selection as an AtomGroup of the universe.
+        selection : str, list, array_like
+            The named selection definition.
 
         """
-        return self._asAtomGroup(handle)
+        return self.get(handle)
 
     def __setitem__(self, handle, selection):
-        """Selection for the given handle and the active universe.
+        """Selection for the given handle.
 
         """
-        if isinstance(selection, (string_types, AtomGroup)):
+        if isinstance(selection, (string_types, np.ndarray)):
             selection = [selection]
         self.add(handle, *selection)
 
@@ -406,32 +389,36 @@ class AtomSelections(Limb):
         data. It is useful to store AtomGroup selections for later use, since
         they can be complex and atom order may matter.
 
-        If a selection with the given *handle* already exists, it is replaced.
+        If a selection with the given `handle` already exists, it is replaced.
 
         Parameters
         ----------
         handle : str
             Name to use for the selection.
         selection : str, AtomGroup
-            Selection string or AtomGroup; multiple selections may be given and
-            their order will be preserved, which is useful for e.g. structural
-            alignments.
+            Selection string or AtomGroup indices; multiple selections may be
+            given and their order will be preserved, which is useful for e.g.
+            structural alignments.
+
         """
-        # Conversion function, leave strings alone,
-        # turn AtomGroups into their indices
-        def conv(x):
-            return x if isinstance(x, string_types) else x.indices
-
-        selection = map(conv, selection)
-
-        with self._treant._write:
+        if len(selection) == 1:
+            sel = selection[0]
+            if isinstance(sel, np.ndarray):
+                outsel = sel.tolist()
+            elif isinstance(sel, string_types):
+                    outsel = sel
+        else:
             outsel = list()
             for sel in selection:
                 if isinstance(sel, np.ndarray):
                     outsel.append(sel.tolist())
                 elif isinstance(sel, string_types):
                     outsel.append(sel)
+                else:
+                    raise ValueError("Selections must be strings, arrays of "
+                                     "atom indices, or tuples/lists of these.")
 
+        with self._treant._write:
             seldict = self._treant._state['mdsynthesis']['atomselections']
             seldict[handle] = outsel
 
@@ -462,8 +449,8 @@ class AtomSelections(Limb):
             seldict = self._treant._state['mdsynthesis']['atomselections']
             return seldict.keys()
 
-    def _asAtomGroup(self, handle):
-        """Get AtomGroup from universe from the given named selection.
+    def create(self, handle):
+        """Generate AtomGroup from universe from the given named selection.
 
         If named selection doesn't exist, :exc:`KeyError` raised.
 
@@ -476,29 +463,39 @@ class AtomSelections(Limb):
         -------
         AtomGroup
             The named selection as an AtomGroup of the universe.
+
         """
-        sel = self.define(handle)
+        sel = self.get(handle)
 
         # Selections might be either
+        # - a single string
+        # - a single list of indices
         # - a list of strings
         # - a list of indices
 
-        ag = None
-        for item in sel:
-            if isinstance(item, string_types):
-                if ag:
-                    ag += self._treant.universe.select_atoms(item)
+        if isinstance(sel, string_types):
+            # if we have a single string
+            ag = self._treant.universe.select_atoms(sel)
+        elif all([isinstance(i, int) for i in sel]):
+            # if we have a single array_like of indices
+            ag = self._treant.universe.atoms[sel]
+        else:
+            ag = None
+            for item in sel:
+                if isinstance(item, string_types):
+                    if ag:
+                        ag += self._treant.universe.select_atoms(item)
+                    else:
+                        ag = self._treant.universe.select_atoms(item)
                 else:
-                    ag = self._treant.universe.select_atoms(item)
-            else:
-                if ag:
-                    ag += self._treant.universe.atoms[item]
-                else:
-                    ag = self._treant.universe.atoms[item]
+                    if ag:
+                        ag += self._treant.universe.atoms[item]
+                    else:
+                        ag = self._treant.universe.atoms[item]
 
         return ag
 
-    def define(self, handle):
+    def get(self, handle):
         """Get selection definition for given handle.
 
         If named selection doesn't exist, :exc:`KeyError` raised.
@@ -512,13 +509,30 @@ class AtomSelections(Limb):
         -------
         definition : list
             list of strings defining the atom selection
+
         """
         with self._treant._read:
             seldict = self._treant._state['mdsynthesis']['atomselections']
 
         try:
-            selstring = seldict[handle]
+            seldef = seldict[handle]
         except KeyError:
             raise KeyError("No such selection '{}'".format(handle))
 
-        return selstring
+        if isinstance(seldef, string_types):
+            # if we have a single string
+            out = seldef
+        elif all([isinstance(i, int) for i in seldef]):
+            # if we have a single list of indices
+            out = np.array(seldef)
+        else:
+            out = []
+            for item in seldef:
+                if isinstance(item, string_types):
+                    out.append(item)
+                else:
+                    out.append(np.array(item))
+
+            out = tuple(out)
+
+        return out
