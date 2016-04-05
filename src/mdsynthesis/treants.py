@@ -54,7 +54,7 @@ class Sim(Treant):
                                   categories=categories,
                                   tags=tags)
 
-        self._udef = None
+        self._universedef = None
         self._atomselections = None
         self._universe = None     # universe 'dock'
 
@@ -69,10 +69,8 @@ class Sim(Treant):
         for this universe directly available via ``Sim.selections``.
 
         Setting this to a :class:`MDAnalysis.Universe` will set that as the
-        universe definition for this Sim. It will not preserve any keyword
-        arguments used to initialize it, however; you will need to add
-        these to :attr:`universe_kwargs` as a dictionary if you want these
-        to apply next time the universe is loaded.
+        universe definition for this Sim. Setting to ``None`` will remove
+        the universe definition entirely.
 
         """
         # TODO: include check for changes to universe definition, not just
@@ -80,40 +78,60 @@ class Sim(Treant):
         if self._universe:
             return self._universe
         else:
-            self.udef._activate()
+            self.universedef._activate()
             return self._universe
 
     @universe.setter
     def universe(self, universe):
-        if not isinstance(universe, Universe):
+        if universe is None:
+            self.universedef._set_topology(None)
+            self.universedef._set_trajectory([])
+            self.universedef.kwargs = None
+            self.universedef.activate()
+
+        elif not isinstance(universe, Universe):
             raise TypeError("Cannot set to {}; must be Universe".format(
                                 type(universe)))
+        else:
+            self.universedef._set_topology(universe.filename)
+            try:  # ChainReader?
+                traj = universe.trajectory.filenames
+            except AttributeError:
+                try:  # Reader?
+                    traj = [universe.trajectory.filename]
+                except AttributeError:  # Only topology
+                    traj = []
 
-        self.udef.topology = universe.filename
-        try:  # ChainReader?
-            traj = universe.trajectory.filenames
-        except AttributeError:
-            try:  # Reader?
-                traj = universe.trajectory.filename
-            except AttributeError:  # Only topology
-                traj = None
+            self.universedef._set_trajectory(traj)
 
-        self.udef.trajectory = traj
+            # try and store keyword arguments
+            try:
+                self.universedef.kwargs = universe.kwargs
+            except AttributeError:
+                warnings.warn("Universe did not keep keyword arguments; "
+                              "cannot store keyword arguments for Universe.")
 
-        # finally, just use this instance
-        self._universe = universe
+            # finally, just use this instance
+            self._universe = universe
+
+    @universe.deleter
+    def universe(self):
+        self.universedef._set_topology(None)
+        self.universedef._set_trajectory([])
+        self.universedef.kwargs = None
+        self.universedef.activate()
 
     @property
-    def udef(self):
+    def universedef(self):
         """The universe definition for this Sim.
 
         """
         # attach universe if not attached, and only give results if a
         # universe is present thereafter
-        if not self._udef:
-            self._udef = limbs.UniverseDefinition(self)
+        if not self._universedef:
+            self._universedef = limbs.UniverseDefinition(self)
 
-        return self._udef
+        return self._universedef
 
     @property
     def atomselections(self):
