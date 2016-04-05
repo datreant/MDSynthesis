@@ -67,6 +67,6 @@ MDSynthesis follows the development model of `datreant`_; see the
     :scale: 100%
     :target: http://codecov.io/github/datreant/MDSynthesis?branch=develop
 
-.. |zen| image:: https://zenodo.org/badge/doi/10.5281/zenodo.18851.svg   
+.. |zen| image:: https://zenodo.org/badge/13742/datreant/MDSynthesis.svg
     :alt: Citation
-    :target: http://dx.doi.org/10.5281/zenodo.18851
+    :target: https://zenodo.org/badge/latestdoi/13742/datreant/MDSynthesis
