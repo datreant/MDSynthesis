@@ -138,15 +138,9 @@ class Sim(Treant):
         """Stored atom selections for the universe.
 
         Useful atom selections can be stored for the universe and
-        recalled later. Selections are stored separately for each defined
-        universe, since the same selection may require a different selection
-        string for different universes.
-
+        recalled later.
         """
-        # attach universe if not attached, and only give results if a
-        # universe is present thereafter
-        if self.universe:
-            if not self._atomselections:
-                self._atomselections = limbs.AtomSelections(self)
+        if not self._atomselections:
+            self._atomselections = limbs.AtomSelections(self)
 
-            return self._atomselections
+        return self._atomselections

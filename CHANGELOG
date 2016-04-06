@@ -13,10 +13,13 @@ The rules for this file:
 
 ------------------------------------------------------------------------------
 
-??/??/16
+??/??/16 dotsdl
 
     * 0.7.0
 
+Changes
+
+    * Sim.atomselections no longer loads Universe on use if not already present
 
 04/04/16 dotsdl, orbeckst, richardjgowers, sseyler
 
