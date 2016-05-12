@@ -1,0 +1,53 @@
+package:
+  name: mdsynthesis
+  version: "0.6.0"
+
+source:
+    path: .
+
+build:
+    noarch_python: True
+    script: $PYTHON setup.py install
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - datreant.core
+    - datreant.data
+    - mdanalysis
+
+
+  run:
+    - python
+    - datreant.core
+    - datreant.data
+    - mdanalysis
+
+test:
+  # Python imports
+  imports:
+    - mdsynthesis
+
+  requires:
+    # Put any additional test requirements here.  For example
+    - pytest
+    - datreant.core
+    - datreant.data
+    - mdanalysis
+
+  files:
+   - src/mdsynthesis/tests
+
+  commands:
+    - py.test src
+
+about:
+  home: http://mdsynthesis.readthedocs.io/en/master/
+  license: GPLVv2
+  license_file: LICENSE.txt
+  summary: 'a persistence engine for molecular dynamics data'
+
+# See
+# http://docs.continuum.io/conda/build.html for
+# more information about meta.yaml
