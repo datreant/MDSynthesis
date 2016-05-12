@@ -347,3 +347,17 @@ class TestReadOnly:
         assert isinstance(sim.universe, mda.Universe)
 
         py.path.local(sim.abspath).chmod(0770, rec=True)
+
+    def test_fresh_sim_readonly(self, sim):
+        """Test that a read-only Sim can be initialized without issue.
+        """
+        # get a new sim instance
+        s = mds.Sim(sim)
+
+        assert isinstance(s.universe, mda.Universe)
+
+        # since we didn't add any atom selections, should raise KeyError
+        # would be nice if it DIDN'T behave this way, but lazy loading keeps
+        # Sim init cheaper
+        with pytest.raises(KeyError):
+            len(s.atomselections) == 0

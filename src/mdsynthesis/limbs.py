@@ -58,6 +58,7 @@ class UniverseDefinition(Limb):
 
         except (IOError, OSError):
             with self._treant._read:
+                mdsdict = self._treant._state['mdsynthesis']
                 try:
                     mdsdict[self._name]
                 except KeyError:
@@ -341,7 +342,7 @@ class AtomSelections(Limb):
                     self._treant._state['mdsynthesis'][self._name]
                 except KeyError:
                     raise KeyError(
-                            ("Missing '{}' data, and cannot write to "
+                            ("No '{}' data, and cannot write to "
                              "Treant '{}'".format(self._name,
                                                   self._treant.filepath)))
 
