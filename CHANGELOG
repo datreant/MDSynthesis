@@ -13,13 +13,15 @@ The rules for this file:
 
 ------------------------------------------------------------------------------
 
-??/??/16 dotsdl
+05/16/16 dotsdl, kain88-de
 
-    * 0.7.0
+    * 0.6.1
 
 Changes
 
     * Sim.atomselections no longer loads Universe on use if not already present
+    * Conda build scripts added
+    * Sims now usable when regenerated from read-only directories/files
 
 04/04/16 dotsdl, orbeckst, richardjgowers, sseyler
 
