@@ -10,7 +10,7 @@ For a basic installation just type the command::
 from setuptools import setup, find_packages
 
 setup(name='mdsynthesis',
-      version='0.6.1-dev',
+      version='0.6.2-dev',
       description='a persistence engine for molecular dynamics data',
       author='David Dotson', 
       author_email='dotsdl@gmail.com',

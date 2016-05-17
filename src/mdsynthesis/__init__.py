@@ -15,4 +15,4 @@ from .treants import Sim
 from . import attach
 
 __all__ = ['Sim', 'Group', 'Bundle']
-__version__ = "0.6.1-dev"  # NOTE: keep in sync with RELEASE in setup.py
+__version__ = "0.6.2-dev"  # NOTE: keep in sync with RELEASE in setup.py
