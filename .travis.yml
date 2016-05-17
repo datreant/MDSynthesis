@@ -18,6 +18,7 @@ branches:
 # install python dependencies
 install:
   - pip install codecov
+  - pip install pytest
   - pip install pytest-cov
   - pip install pytest-pep8
   - pip install numpy numexpr Cython
