@@ -3,14 +3,14 @@ Installing MDSynthesis
 ======================
 Since MDSynthesis requires ``datreant.data``, which uses HDF5 as the file
 format of choice for persistence, you will first need to install the HDF5
-libraries either using your package manager or manually. 
+libraries either using your package manager or manually.
 
 On **Ubuntu 14.04** this will be ::
 
     apt-get install libhdf5-serial-1.8.4 libhdf5-serial-dev
 
 and on **Arch Linux** ::
-   
+
     pacman -S hdf5
 
 You can then install MDSynthesis from `PyPI <https://pypi.python.org/>`_
@@ -25,6 +25,15 @@ directory::
 
 Be aware that some dependencies may require ``numpy`` and/or Cython to
 be installed beforehand!
+
+Installing using Conda
+======================
+
+We also provide conda packages. Using the conda packages has the advantage that
+they contain the hdf5 library, so you can install MDSynthesis easily on all unix
+systems including macOS. To install MDSynthesis with conda type::
+
+    conda install -c datreant mdsynthesis
 
 Dependencies
 ============
