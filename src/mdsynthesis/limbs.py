@@ -17,7 +17,6 @@ import warnings
 from datreant.core import Leaf
 from datreant.core.limbs import Limb
 from MDAnalysis import Universe
-from MDAnalysis.core.AtomGroup import AtomGroup
 
 from .filesystem import Universehound
 
