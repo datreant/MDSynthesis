@@ -3,12 +3,10 @@ Basic Treant objects: the organizational units for :mod:`mdsynthesis`.
 
 """
 import warnings
-import os
-from six import string_types
 
 from MDAnalysis import Universe
 
-from datreant.core import Treant, Leaf
+from datreant.core import Treant
 from . import limbs
 from .backends import statefiles
 

@@ -12,7 +12,7 @@ from setuptools import setup, find_packages
 setup(name='mdsynthesis',
       version='0.6.2-dev',
       description='a persistence engine for molecular dynamics data',
-      author='David Dotson', 
+      author='David Dotson',
       author_email='dotsdl@gmail.com',
       url='http://mdsynthesis.readthedocs.org/',
       classifiers=[
@@ -34,4 +34,4 @@ setup(name='mdsynthesis',
                 'datreant.data>=0.6.0',
                 'MDAnalysis>=0.14.0',
                 ],
-     )
+      )

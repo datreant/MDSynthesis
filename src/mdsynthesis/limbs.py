@@ -406,7 +406,7 @@ class AtomSelections(Limb):
             if isinstance(sel, np.ndarray):
                 outsel = sel.tolist()
             elif isinstance(sel, string_types):
-                    outsel = sel
+                outsel = sel
         else:
             outsel = list()
             for sel in selection:
