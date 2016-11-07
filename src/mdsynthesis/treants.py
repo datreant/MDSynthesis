@@ -101,14 +101,7 @@ class Sim(Treant):
                     traj = []
 
             self.universedef._set_trajectory(traj)
-
-            # try and store keyword arguments
-            try:
-                self.universedef.kwargs = universe.kwargs
-            except AttributeError:
-                warnings.warn("Universe did not keep keyword arguments; "
-                              "cannot store keyword arguments for Universe.")
-
+            self.universedef.kwargs = universe.kwargs
             # finally, just use this instance
             self._universe = universe
 
