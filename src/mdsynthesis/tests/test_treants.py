@@ -141,7 +141,7 @@ class TestSim(TestTreant):
 
             protein = treant.universe.select_atoms('protein')
             resids = protein.residues.resids
-            protein.residues.set_resnum(resids + 3)
+            protein.residues.resnums = resids + 3
 
             treant.universedef._set_resnums(treant.universe.residues.resnums)
 
@@ -151,7 +151,7 @@ class TestSim(TestTreant):
             assert (resids + 3 == protein.residues.resnums).all()
 
             # test resetting of resnums
-            protein.residues.set_resnum(resids + 6)
+            protein.residues.resnums = resids + 6
 
             assert (protein.residues.resnums == resids + 6).all()
             treant.universedef._set_resnums(treant.universe.residues.resnums)

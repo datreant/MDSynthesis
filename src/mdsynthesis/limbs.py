@@ -215,7 +215,7 @@ class UniverseDefinition(Limb):
                 resnums = None
 
         if resnums:
-            self._treant._universe.residues.set_resnums(np.array(resnums))
+            self._treant._universe.residues.resnums = resnums
 
     @deprecate(message="resnum storage is deprecated")
     def _set_resnums(self, resnums):
@@ -239,7 +239,7 @@ class UniverseDefinition(Limb):
             if resnums is None:
                 simdict['resnums'] = None
             else:
-                simdict['resnums'] = list(resnums)
+                simdict['resnums'] = np.asarray(resnums).tolist()
 
             if self._treant._universe:
                 self._apply_resnums()
