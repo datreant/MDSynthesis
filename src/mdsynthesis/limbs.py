@@ -215,7 +215,11 @@ class UniverseDefinition(Limb):
                 resnums = None
 
         if resnums:
-            self._treant._universe.residues.resnums = resnums
+            # Compatibility for MDAnalysis pre 0.16.0
+            try:
+                self._treant._universe.residues.resnums = resnums
+            except AttributeError:
+                self._treant._universe.residues.set_resnum(resnums)
 
     @deprecate(message="resnum storage is deprecated")
     def _set_resnums(self, resnums):
