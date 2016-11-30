@@ -3,11 +3,7 @@
 """
 
 import mdsynthesis as mds
-import pandas as pd
-import numpy as np
 import pytest
-import os
-import shutil
 import py
 from pkg_resources import parse_version
 
@@ -101,12 +97,6 @@ class TestSim(TestTreant):
             with pytest.raises(ValueError):
                 treant.universe = u2
 
-            # check that we get a warning if a Universe didn't store its kwargs
-            u3 = mda.Universe(PDB, XTC, something_fake=True)
-            del u3._kwargs
-            with pytest.warns(UserWarning):
-                treant.universe = u3
-
         def test_add_univese_typeerror(self, treant):
             """Test checking of what is passed to setter"""
             with pytest.raises(TypeError):
@@ -145,7 +135,11 @@ class TestSim(TestTreant):
 
             protein = treant.universe.select_atoms('protein')
             resids = protein.residues.resids
-            protein.residues.set_resnum(resids + 3)
+            # Compatibility for MDAnalysis pre 0.16.0
+            try:
+                protein.residues.resnums = resids + 3
+            except AttributeError:
+                protein.residues.set_resnum(resids + 3)
 
             treant.universedef._set_resnums(treant.universe.residues.resnums)
 
@@ -154,8 +148,11 @@ class TestSim(TestTreant):
             protein = treant.universe.select_atoms('protein')
             assert (resids + 3 == protein.residues.resnums).all()
 
-            # test resetting of resnums
-            protein.residues.set_resnum(resids + 6)
+            # Compatibility for MDAnalysis pre 0.16.0
+            try:
+                protein.residues.resnums = resids + 6
+            except AttributeError:
+                protein.residues.set_resnum(resids + 6)
 
             assert (protein.residues.resnums == resids + 6).all()
             treant.universedef._set_resnums(treant.universe.residues.resnums)
@@ -322,10 +319,10 @@ class TestReadOnly:
             c.universedef.topology = GRO_t.strpath
             c.universedef.trajectory = XTC_t.strpath
 
-            py.path.local(c.abspath).chmod(0550, rec=True)
+            py.path.local(c.abspath).chmod(0o0550, rec=True)
 
         def fin():
-            py.path.local(c.abspath).chmod(0770, rec=True)
+            py.path.local(c.abspath).chmod(0o0770, rec=True)
 
         request.addfinalizer(fin)
 
@@ -340,13 +337,13 @@ class TestReadOnly:
         """Test that Sim can access Universe when read-only, especially
         when universe files have moved with it (stale paths).
         """
-        py.path.local(sim.abspath).chmod(0770, rec=True)
+        py.path.local(sim.abspath).chmod(0o0770, rec=True)
         sim.location = tmpdir.mkdir('test').strpath
-        py.path.local(sim.abspath).chmod(0550, rec=True)
+        py.path.local(sim.abspath).chmod(0o0550, rec=True)
 
         assert isinstance(sim.universe, mda.Universe)
 
-        py.path.local(sim.abspath).chmod(0770, rec=True)
+        py.path.local(sim.abspath).chmod(0o0770, rec=True)
 
     def test_fresh_sim_readonly(self, sim):
         """Test that a read-only Sim can be initialized without issue.
@@ -360,4 +357,4 @@ class TestReadOnly:
         # would be nice if it DIDN'T behave this way, but lazy loading keeps
         # Sim init cheaper
         with pytest.raises(KeyError):
-            len(s.atomselections) == 0
+            s.atomselections

@@ -3,9 +3,6 @@ Functions and classes for finding Treants in the filesystem.
 
 """
 import os
-import glob
-
-from datreant.core import Treant, Group
 
 
 class Universehound(object):

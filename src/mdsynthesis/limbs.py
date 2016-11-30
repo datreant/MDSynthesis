@@ -17,7 +17,6 @@ import warnings
 from datreant.core import Leaf
 from datreant.core.limbs import Limb
 from MDAnalysis import Universe
-from MDAnalysis.core.AtomGroup import AtomGroup
 
 from .filesystem import Universehound
 
@@ -216,7 +215,11 @@ class UniverseDefinition(Limb):
                 resnums = None
 
         if resnums:
-            self._treant._universe.residues.set_resnums(np.array(resnums))
+            # Compatibility for MDAnalysis pre 0.16.0
+            try:
+                self._treant._universe.residues.resnums = resnums
+            except AttributeError:
+                self._treant._universe.residues.set_resnum(resnums)
 
     @deprecate(message="resnum storage is deprecated")
     def _set_resnums(self, resnums):
@@ -240,7 +243,7 @@ class UniverseDefinition(Limb):
             if resnums is None:
                 simdict['resnums'] = None
             else:
-                simdict['resnums'] = list(resnums)
+                simdict['resnums'] = np.asarray(resnums).tolist()
 
             if self._treant._universe:
                 self._apply_resnums()
@@ -407,7 +410,7 @@ class AtomSelections(Limb):
             if isinstance(sel, np.ndarray):
                 outsel = sel.tolist()
             elif isinstance(sel, string_types):
-                    outsel = sel
+                outsel = sel
         else:
             outsel = list()
             for sel in selection:
