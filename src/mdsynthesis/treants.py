@@ -34,8 +34,6 @@ class Sim(Treant):
         Base directory of a new or existing Sim; will regenerate a Sim if a
         state file is found, but will genereate a new one otherwise; may also
         be a Tree object
-    new : bool
-        Generate a new Sim even if one already exists at the given location
     categories : dict
         dictionary with user-defined keys and values; used to give Sims
         distinguishing characteristics
@@ -46,9 +44,8 @@ class Sim(Treant):
     _treanttype = 'Sim'
     _backendclass = statefiles.SimFile
 
-    def __init__(self, sim, new=False, categories=None, tags=None):
+    def __init__(self, sim, categories=None, tags=None):
         super(Sim, self).__init__(sim,
-                                  new=new,
                                   categories=categories,
                                   tags=tags)
 

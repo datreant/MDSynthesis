@@ -9,5 +9,4 @@ mdsynthesis.tests --- unit tests for mdsynthesis
 
 """
 # Bring some often used objects into the current namespace
-from . import test_filesystem
 from . import test_treants

@@ -15,96 +15,71 @@ from numpy.lib.utils import deprecate
 import warnings
 
 from datreant.core import Leaf
-# from datreant.core.limbs import Limb
+from datreant.core.metadata import Metadata
 from MDAnalysis import Universe
 
-from .filesystem import Universehound
 
 
-Limb = object
-
-class UniverseDefinition(Limb):
+class UniverseDefinition(Metadata):
     """The defined universe of the Sim.
 
     Universes are interfaces to raw simulation data, with stored selections for
     this universe directly available via ``Sim.atomselections``.
 
     """
-    _name = 'universedef'
-    _filepaths = ['abs', 'rel']
+    # _name = 'universedef'
+    # _filepaths = ['abs', 'rel']
+    _statefilename = 'universedef.json'
 
-    def __init__(self, treant):
-        super(UniverseDefinition, self).__init__(treant)
+    @staticmethod
+    def _init_state(jsonfile):
+        """Used solely for initializing JSONFile state for storing tag
+        information.
 
-        subitems = {'topology': dict,
-                    'trajectory': list,
-                    'kwargs': dict}
+        """
+        jsonfile._state = {'topology': dict(),
+                           'trajectory': list(),
+                           'kwargs': dict()}
 
-        # init state if for udef not already there;
-        # if read-only, check that it is there,
-        # and raise exception if it is not
-        try:
-            with self._treant._write:
-                mdsdict = self._treant._state['mdsynthesis']
-                try:
-                    mdsdict[self._name]
-                except KeyError:
-                    mdsdict[self._name] = dict()
-
-                for key, value in subitems.items():
-                    try:
-                        mdsdict[self._name][key]
-                    except KeyError:
-                        mdsdict[self._name][key] = value()
-
-        except (IOError, OSError):
-            with self._treant._read:
-                mdsdict = self._treant._state['mdsynthesis']
-                try:
-                    mdsdict[self._name]
-                except KeyError:
-                    raise KeyError(
-                            ("Missing '{}' data, and cannot write to "
-                             "Treant '{}'".format(self._name,
-                                                  self._treant.filepath)))
-
+    # TODO(max): move to Sim
     def _activate(self):
         """Make the universe and attach it.
 
         """
-        if not self.topology:
-            self._treant._universe = None
-            return
+        pass
+        # if not self.topology:
+        #     self._universe = None
+        #     return
 
-        uh = Universehound(self)
-        paths = uh.fetch()
-        topology = paths['top']
-        trajectory = paths['traj']
+        # uh = None
+        # paths = uh.fetch()
+        # topology = paths['top']
+        # trajectory = paths['traj']
 
-        if not trajectory:
-            self._treant._universe = Universe(topology, **self.kwargs)
-        else:
-            self._treant._universe = Universe(topology, *trajectory,
-                                              **self.kwargs)
+        # if not trajectory:
+        #     self._universe = Universe(topology, **self.kwargs)
+        # else:
+        #     self._universe = Universe(topology, *trajectory,
+        #                               **self.kwargs)
 
-        self._apply_resnums()
+        # self._apply_resnums()
 
-        # update the universe definition; will automatically build current
-        # path variants for each file
-        # if read-only, move on
-        try:
-            self._set_topology(topology)
-            self._set_trajectory(trajectory)
-        except OSError:
-            warnings.warn(
-                "Cannot update paths for universe; "
-                " state file is read-only.")
+        # # update the universe definition; will automatically build current
+        # # path variants for each file
+        # # if read-only, move on
+        # try:
+        #     self._set_topology(topology)
+        #     self._set_trajectory(trajectory)
+        # except OSError:
+        #     warnings.warn(
+        #         "Cannot update paths for universe; "
+        #         " state file is read-only.")
 
     def reload(self):
         """Re-load the universe from its stored definition.
 
         """
-        self._activate()
+        # self._activate()
 
     @property
     def topology(self):
@@ -115,10 +90,9 @@ class UniverseDefinition(Limb):
         but the trajectory paths will be retained.
 
         """
-        with self._treant._read:
-            mdsdict = self._treant._state['mdsynthesis']
-            topstate = mdsdict['universedef']['topology']
-
+        with self._read:
+            mdsdict = self._statefile._state
+            topstate = mdsdict['topology']
             if not topstate:
                 return None
             else:
@@ -137,21 +111,20 @@ class UniverseDefinition(Limb):
 
         self._set_topology(path)
 
+        # Move into Sim
         # reset universe, if present
-        if self._treant._universe:
-            self._activate()
+        # if self._universe:
+        #     self._activate()
 
     def _set_topology(self, path):
-        with self._treant._write:
-            mdsdict = self._treant._state['mdsynthesis']
-            topstate = mdsdict['universedef']['topology']
+        with self._write:
+            mdsdict = self._statefile._state
+            topstate = mdsdict['topology']
 
             if path is None:
-                mdsdict['universedef']['topology'] = dict()
+                mdsdict['topology'] = dict()
             else:
                 topstate['abspath'] = os.path.abspath(path)
-                topstate['relpath'] = os.path.relpath(path,
-                                                      self._treant.abspath)
 
     @property
     def trajectory(self):
@@ -164,9 +137,9 @@ class UniverseDefinition(Limb):
         load a trajectory file at all (but the topology may have coordinates).
 
         """
-        with self._treant._read:
-            mdsdict = self._treant._state['mdsynthesis']
-            traj = mdsdict['universedef']['trajectory']
+        with self._read:
+            mdsdict = self._statefile._state
+            traj = mdsdict['trajectory']
             if not traj:
                 return None
             elif len(traj) == 1:
@@ -190,27 +163,27 @@ class UniverseDefinition(Limb):
 
         self._set_trajectory(trajs)
 
+        # move into sim
         # reset universe, if present
-        if self._treant._universe:
-            self._activate()
+        # if self._treant._universe:
+        #     self._activate()
 
     def _set_trajectory(self, trajs):
-        with self._treant._write:
-            mdsdict = self._treant._state['mdsynthesis']
-            mdsdict['universedef']['trajectory'] = []
-            trajstate = mdsdict['universedef']['trajectory']
+        with self._write:
+            mdsdict = self._statefile._state
+            mdsdict['trajectory'] = []
+            trajstate = mdsdict['trajectory']
 
             for traj in trajs:
                 trajstate.append(
-                        [os.path.abspath(traj),
-                         os.path.relpath(traj, self._treant.abspath)])
+                        [os.path.abspath(traj),])
 
     def _apply_resnums(self):
         """Apply resnum definition to universe.
 
         """
-        with self._treant._read:
-            simdict = self._treant._state['mdsynthesis']['universedef']
+        with self._read:
+            simdict = self._statefile._state
             try:
                 resnums = simdict['resnums']
             except KeyError:
@@ -240,8 +213,8 @@ class UniverseDefinition(Limb):
                 topology, in atom index order; giving ``None`` will delete
                 resnum definition
         """
-        with self._treant._write:
-            simdict = self._treant._state['mdsynthesis']['universedef']
+        with self._write:
+            simdict = self._statefile._state
             if resnums is None:
                 simdict['resnums'] = None
             else:
@@ -250,7 +223,7 @@ class UniverseDefinition(Limb):
             if self._treant._universe:
                 self._apply_resnums()
 
-    def _define(self, pathtype='abs'):
+    def _define(self):
         """Get the stored path to the topology and trajectory used for the
         universe.
 
@@ -271,20 +244,12 @@ class UniverseDefinition(Limb):
             list of paths to trajectory files
 
         """
-        with self._treant._read:
-            mdsdict = self._treant._state['mdsynthesis']
-            top = mdsdict['universedef']['topology']
-            outtop = {'abs': top['abspath'],
-                      'rel': top['relpath']}
+        with self._read:
+            mdsdict = self._statefile._state
+            outtop = mdsdict['topology']['abspath']
+            outtrajs = mdsdict['trajectory']['abspaths']
 
-            trajs = mdsdict['universedef']['trajectory']
-            outtraj = {key: [] for key in self._filepaths}
-
-        for traj in trajs:
-            for i, key in enumerate(self._filepaths):
-                outtraj[key].append(traj[i])
-
-        return outtop[pathtype], outtraj[pathtype]
+        return outtop, outtrajs
 
     @property
     def kwargs(self):
@@ -296,9 +261,8 @@ class UniverseDefinition(Limb):
         bools, or ``None``.
 
         """
-        with self._treant._read:
-            mdsdict = self._treant._state['mdsynthesis']
-            return mdsdict['universedef']['kwargs']
+        with self._read:
+            return self._statefile._state['kwargs']
 
     @kwargs.setter
     def kwargs(self, kwargs):
@@ -316,40 +280,26 @@ class UniverseDefinition(Limb):
         else:
             raise TypeError("Must be a dictionary or ``None``")
 
-        with self._treant._write:
-            simdict = self._treant._state['mdsynthesis']['universedef']
-            simdict['kwargs'] = kwargs
+        with self._write:
+            self._statefile._state['kwargs'] = kwargs
 
 
-class AtomSelections(Limb):
+class AtomSelections(Metadata):
     """Stored atom selections for the universe.
 
     Useful atom selections can be stored for the universe and recalled later.
 
     """
-    _name = 'atomselections'
+    #_name = 'atomselections'
+    _statefilename = 'atomselections.json'
 
-    def __init__(self, treant):
-        super(AtomSelections, self).__init__(treant)
+    @staticmethod
+    def _init_state(jsonfile):
+        """Used solely for initializing JSONFile state for storing tag
+        information.
 
-        # init state if for selections not already there;
-        # if read-only, check that it is there,
-        # and raise exception if it is not
-        try:
-            with self._treant._write:
-                try:
-                    self._treant._state['mdsynthesis'][self._name]
-                except KeyError:
-                    self._treant._state['mdsynthesis'][self._name] = dict()
-        except (IOError, OSError):
-            with self._treant._read:
-                try:
-                    self._treant._state['mdsynthesis'][self._name]
-                except KeyError:
-                    raise KeyError(
-                            ("No '{}' data, and cannot write to "
-                             "Treant '{}'".format(self._name,
-                                                  self._treant.filepath)))
+        """
+        jsonfile._state = {}
 
     def __repr__(self):
         return "<AtomSelections({})>".format(
@@ -424,8 +374,8 @@ class AtomSelections(Limb):
                     raise ValueError("Selections must be strings, arrays of "
                                      "atom indices, or tuples/lists of these.")
 
-        with self._treant._write:
-            seldict = self._treant._state['mdsynthesis']['atomselections']
+        with self._write:
+            seldict = self._statefile._state
             seldict[handle] = outsel
 
     def remove(self, *handle):
@@ -439,8 +389,8 @@ class AtomSelections(Limb):
             Name of selection(s) to remove.
 
         """
-        with self._treant._write:
-            seldict = self._treant._state['mdsynthesis']['atomselections']
+        with self._write:
+            seldict = self._statefile._state
             for item in handle:
                 try:
                     del seldict[item]
@@ -451,8 +401,8 @@ class AtomSelections(Limb):
         """Return a list of all selection handles.
 
         """
-        with self._treant._read:
-            seldict = self._treant._state['mdsynthesis']['atomselections']
+        with self._read:
+            seldict = self._statefile._state
             return seldict.keys()
 
     def create(self, handle):
@@ -471,35 +421,36 @@ class AtomSelections(Limb):
             The named selection as an AtomGroup of the universe.
 
         """
-        sel = self.get(handle)
+        pass
+    #     sel = self.get(handle)
 
-        # Selections might be either
-        # - a single string
-        # - a single list of indices
-        # - a list of strings
-        # - a list of indices
+    #     # Selections might be either
+    #     # - a single string
+    #     # - a single list of indices
+    #     # - a list of strings
+    #     # - a list of indices
 
-        if isinstance(sel, string_types):
-            # if we have a single string
-            ag = self._treant.universe.select_atoms(sel)
-        elif all([isinstance(i, int) for i in sel]):
-            # if we have a single array_like of indices
-            ag = self._treant.universe.atoms[sel]
-        else:
-            ag = None
-            for item in sel:
-                if isinstance(item, string_types):
-                    if ag:
-                        ag += self._treant.universe.select_atoms(item)
-                    else:
-                        ag = self._treant.universe.select_atoms(item)
-                else:
-                    if ag:
-                        ag += self._treant.universe.atoms[item]
-                    else:
-                        ag = self._treant.universe.atoms[item]
+    #     if isinstance(sel, string_types):
+    #         # if we have a single string
+    #         ag = self._treant.universe.select_atoms(sel)
+    #     elif all([isinstance(i, int) for i in sel]):
+    #         # if we have a single array_like of indices
+    #         ag = self._treant.universe.atoms[sel]
+    #     else:
+    #         ag = None
+    #         for item in sel:
+    #             if isinstance(item, string_types):
+    #                 if ag:
+    #                     ag += self._treant.universe.select_atoms(item)
+    #                 else:
+    #                     ag = self._treant.universe.select_atoms(item)
+    #             else:
+    #                 if ag:
+    #                     ag += self._treant.universe.atoms[item]
+    #                 else:
+    #                     ag = self._treant.universe.atoms[item]
 
-        return ag
+    #     return ag
 
     def get(self, handle):
         """Get selection definition for given handle.
@@ -517,28 +468,29 @@ class AtomSelections(Limb):
             list of strings defining the atom selection
 
         """
-        with self._treant._read:
-            seldict = self._treant._state['mdsynthesis']['atomselections']
+        pass
+        # with self._treant._read:
+        #     seldict = self._treant._state['mdsynthesis']['atomselections']
 
-        try:
-            seldef = seldict[handle]
-        except KeyError:
-            raise KeyError("No such selection '{}'".format(handle))
+        # try:
+        #     seldef = seldict[handle]
+        # except KeyError:
+        #     raise KeyError("No such selection '{}'".format(handle))
 
-        if isinstance(seldef, string_types):
-            # if we have a single string
-            out = seldef
-        elif all([isinstance(i, int) for i in seldef]):
-            # if we have a single list of indices
-            out = np.array(seldef)
-        else:
-            out = []
-            for item in seldef:
-                if isinstance(item, string_types):
-                    out.append(item)
-                else:
-                    out.append(np.array(item))
+        # if isinstance(seldef, string_types):
+        #     # if we have a single string
+        #     out = seldef
+        # elif all([isinstance(i, int) for i in seldef]):
+        #     # if we have a single list of indices
+        #     out = np.array(seldef)
+        # else:
+        #     out = []
+        #     for item in seldef:
+        #         if isinstance(item, string_types):
+        #             out.append(item)
+        #         else:
+        #             out.append(np.array(item))
 
-            out = tuple(out)
+        #     out = tuple(out)
 
-        return out
+        # return out
