@@ -8,9 +8,9 @@ from MDAnalysis import Universe
 
 from datreant.core import Treant
 from . import limbs
-from .backends import statefiles
 
 
+# TODO: use composition with `self.treant = ...`
 class Sim(Treant):
     """The Sim object is an interface to data for a single simulation.
 
@@ -42,7 +42,6 @@ class Sim(Treant):
         many distinguishing descriptors
     """
     _treanttype = 'Sim'
-    _backendclass = statefiles.SimFile
 
     def __init__(self, sim, categories=None, tags=None):
         super(Sim, self).__init__(sim,
