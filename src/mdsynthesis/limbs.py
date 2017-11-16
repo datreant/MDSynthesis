@@ -155,8 +155,8 @@ class UniverseDefinition(Metadata):
         elif isinstance(kwargs, dict):
             # check that values are serializable
             for key, value in kwargs.items():
-                if not (isinstance(value, (string_types, bool, int, float))
-                        or value is None):
+                if not (isinstance(value, (string_types, bool, int, float)) or
+                        value is None):
                     raise ValueError("Cannot store keyword '{}' for Universe; "
                                      "value must be a string, bool, int, "
                                      "float, or ``None``, "
@@ -172,7 +172,9 @@ class UniverseDefinition(Metadata):
         """dict to generate a universe"""
         if self.topology is None:
             return None
-        args = [self.topology, ]
+        args = [
+            self.topology,
+        ]
         if self.trajectory is not None:
             args.append(self.trajectory)
         return args
@@ -186,8 +188,8 @@ class UniverseDefinition(Metadata):
         if universe is None:
             self._clear()
         elif not isinstance(universe, mda.Universe):
-            raise TypeError("Cannot set to {}; must be Universe".format(
-                type(universe)))
+            raise TypeError(
+                "Cannot set to {}; must be Universe".format(type(universe)))
         else:
             self.topology = universe.filename
             try:  # ChainReader?
