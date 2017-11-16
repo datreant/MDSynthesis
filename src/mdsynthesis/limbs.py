@@ -170,10 +170,10 @@ class UniverseDefinition(Metadata):
     @property
     def _args(self):
         """dict to generate a universe"""
-        kwargs = self.kwargs
-        kwargs['topology'] = self.topology
-        kwargs['trajectory'] = self.trajectory
-        return kwargs
+        args = [self.topology, ]
+        if self.trajectory is not None:
+            args.append(self.trajectory)
+        return args
 
     def _clear(self):
         self._set_topology(None)

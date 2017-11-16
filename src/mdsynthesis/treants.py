@@ -69,11 +69,13 @@ class Sim(Treant):
         """
         # TODO: include check for changes to universe definition, not just
         # definition absence
-        if self._universe:
-            return self._universe
-        else:
-            self._universe = mda.Universe(**self.universedef._args)
-            return self._universe
+        # if self._universe:
+        #     return self._universe
+        # else:
+        args = self.universedef._args
+        kwargs = self.universedef.kwargs
+        self._universe = mda.Universe(*args, **kwargs)
+        return self._universe
 
     @universe.setter
     def universe(self, universe):

@@ -31,7 +31,6 @@ class TestSim(TestTreant):
     class TestUniverse:
         """Test universe functionality"""
 
-        @pytest.mark.skip("not implemented in SIM")
         def test_add_universe(self, treant):
             """Test adding a new unverse definition"""
             treant.universedef.topology = GRO
