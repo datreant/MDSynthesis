@@ -15,11 +15,13 @@ from numpy.lib.utils import deprecate
 import warnings
 
 from datreant.core import Leaf
-from datreant.core.limbs import Limb
+# from datreant.core.limbs import Limb
 from MDAnalysis import Universe
 
 from .filesystem import Universehound
 
+
+Limb = object
 
 class UniverseDefinition(Limb):
     """The defined universe of the Sim.

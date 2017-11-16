@@ -2,8 +2,9 @@
 Interface classes for state files.
 
 """
-from datreant.core.backends.statefiles import TreantFile
+# from datreant.core.backends.statefiles import TreantFile
 
+TreantFile = object
 
 class SimFile(TreantFile):
 
