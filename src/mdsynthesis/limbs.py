@@ -19,7 +19,6 @@ from datreant.core.metadata import Metadata
 from MDAnalysis import Universe
 
 
-
 class UniverseDefinition(Metadata):
     """The defined universe of the Sim.
 
@@ -37,49 +36,11 @@ class UniverseDefinition(Metadata):
         information.
 
         """
-        jsonfile._state = {'topology': dict(),
-                           'trajectory': list(),
-                           'kwargs': dict()}
-
-    # TODO(max): move to Sim
-    def _activate(self):
-        """Make the universe and attach it.
-
-        """
-        pass
-        # if not self.topology:
-        #     self._universe = None
-        #     return
-
-        # uh = None
-        # paths = uh.fetch()
-        # topology = paths['top']
-        # trajectory = paths['traj']
-
-        # if not trajectory:
-        #     self._universe = Universe(topology, **self.kwargs)
-        # else:
-        #     self._universe = Universe(topology, *trajectory,
-        #                               **self.kwargs)
-
-        # self._apply_resnums()
-
-        # # update the universe definition; will automatically build current
-        # # path variants for each file
-        # # if read-only, move on
-        # try:
-        #     self._set_topology(topology)
-        #     self._set_trajectory(trajectory)
-        # except OSError:
-        #     warnings.warn(
-        #         "Cannot update paths for universe; "
-        #         " state file is read-only.")
-
-    def reload(self):
-        """Re-load the universe from its stored definition.
-
-        """
-        # self._activate()
+        jsonfile._state = {
+            'topology': dict(),
+            'trajectory': list(),
+            'kwargs': dict()
+        }
 
     @property
     def topology(self):
@@ -163,11 +124,6 @@ class UniverseDefinition(Metadata):
 
         self._set_trajectory(trajs)
 
-        # move into sim
-        # reset universe, if present
-        # if self._treant._universe:
-        #     self._activate()
-
     def _set_trajectory(self, trajs):
         with self._write:
             mdsdict = self._statefile._state
@@ -175,81 +131,9 @@ class UniverseDefinition(Metadata):
             trajstate = mdsdict['trajectory']
 
             for traj in trajs:
-                trajstate.append(
-                        [os.path.abspath(traj),])
-
-    def _apply_resnums(self):
-        """Apply resnum definition to universe.
-
-        """
-        with self._read:
-            simdict = self._statefile._state
-            try:
-                resnums = simdict['resnums']
-            except KeyError:
-                resnums = None
-
-        if resnums:
-            # Compatibility for MDAnalysis pre 0.16.0
-            try:
-                self._treant._universe.residues.resnums = resnums
-            except AttributeError:
-                self._treant._universe.residues.set_resnum(resnums)
-
-    @deprecate(message="resnum storage is deprecated")
-    def _set_resnums(self, resnums):
-        """Define resnums for the universe.
-
-        Resnums are useful for referring to residues by their canonical resid,
-        for instance that stored in the PDB. By giving a resnum definition
-        for the universe, this definition will be applied to the universe.
-
-        Will overwrite existing resnum definition if it exists.
-
-        Parameters
-        ----------
-        resnums : array_like
-                array or list giving the resnum for each residue in the
-                topology, in atom index order; giving ``None`` will delete
-                resnum definition
-        """
-        with self._write:
-            simdict = self._statefile._state
-            if resnums is None:
-                simdict['resnums'] = None
-            else:
-                simdict['resnums'] = np.asarray(resnums).tolist()
-
-            if self._treant._universe:
-                self._apply_resnums()
-
-    def _define(self):
-        """Get the stored path to the topology and trajectory used for the
-        universe.
-
-        .. note:: Does no checking as to whether these paths are valid. To
-                  check this, try using the universe.
-
-        Parameters
-        ----------
-        pathtype : {'abs', 'rel'}
-            type of path to return; 'abs' gives an absolute path, 'rel' gives a
-            path relative to the Sim's state file
-
-        Returns
-        -------
-        topology : str
-            path to the topology file
-        trajectory : list
-            list of paths to trajectory files
-
-        """
-        with self._read:
-            mdsdict = self._statefile._state
-            outtop = mdsdict['topology']['abspath']
-            outtrajs = mdsdict['trajectory']['abspaths']
-
-        return outtop, outtrajs
+                trajstate.append([
+                    os.path.abspath(traj),
+                ])
 
     @property
     def kwargs(self):
@@ -271,8 +155,8 @@ class UniverseDefinition(Metadata):
         elif isinstance(kwargs, dict):
             # check that values are serializable
             for key, value in kwargs.items():
-                if not (isinstance(value, (string_types, bool, int, float)) or
-                        value is None):
+                if not (isinstance(value, (string_types, bool, int, float))
+                        or value is None):
                     raise ValueError("Cannot store keyword '{}' for Universe; "
                                      "value must be a string, bool, int, "
                                      "float, or ``None``, "
@@ -290,7 +174,6 @@ class AtomSelections(Metadata):
     Useful atom selections can be stored for the universe and recalled later.
 
     """
-    #_name = 'atomselections'
     _statefilename = 'atomselections.json'
 
     @staticmethod
@@ -303,7 +186,8 @@ class AtomSelections(Metadata):
 
     def __repr__(self):
         return "<AtomSelections({})>".format(
-                {x: self.get(x) for x in self.keys()})
+            {x: self.get(x)
+             for x in self.keys()})
 
     def __getitem__(self, handle):
         """Get selection for given handle.
@@ -422,6 +306,7 @@ class AtomSelections(Metadata):
 
         """
         pass
+
     #     sel = self.get(handle)
 
     #     # Selections might be either
