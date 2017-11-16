@@ -102,7 +102,6 @@ class TestSim(TestTreant):
             with pytest.raises(TypeError):
                 treant.universe = 72
 
-        @pytest.mark.skip("not implemented in SIM")
         def test_remove_universe(self, treant):
             """Test universe removal"""
             treant.universedef.topology = GRO

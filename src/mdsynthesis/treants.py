@@ -74,7 +74,10 @@ class Sim(Treant):
         # else:
         args = self.universedef._args
         kwargs = self.universedef.kwargs
-        self._universe = mda.Universe(*args, **kwargs)
+        if args is None:
+            self._universe = None
+        else:
+            self._universe = mda.Universe(*args, **kwargs)
         return self._universe
 
     @universe.setter
