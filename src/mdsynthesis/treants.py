@@ -4,7 +4,7 @@ Basic Treant objects: the organizational units for :mod:`mdsynthesis`.
 """
 import warnings
 
-from MDAnalysis import Universe
+import MDAnalysis as mda
 
 from datreant.core import Treant
 from . import limbs
@@ -48,8 +48,8 @@ class Sim(Treant):
                                   categories=categories,
                                   tags=tags)
 
-        self._universedef = None
-        self._atomselections = None
+        self._universedef = limbs.UniverseDefinition(self)
+        self._atomselections = limbs.AtomSelections(self)
         self._universe = None     # universe 'dock'
 
     def __repr__(self):
@@ -72,52 +72,24 @@ class Sim(Treant):
         if self._universe:
             return self._universe
         else:
-            self.universedef._activate()
+            self._universe = mda.Universe(**self.universedef._args)
             return self._universe
 
     @universe.setter
     def universe(self, universe):
-        if universe is None:
-            self.universedef._set_topology(None)
-            self.universedef._set_trajectory([])
-            self.universedef.kwargs = None
-            self.universedef.activate()
-
-        elif not isinstance(universe, Universe):
-            raise TypeError("Cannot set to {}; must be Universe".format(
-                                type(universe)))
-        else:
-            self.universedef._set_topology(universe.filename)
-            try:  # ChainReader?
-                traj = universe.trajectory.filenames
-            except AttributeError:
-                try:  # Reader?
-                    traj = [universe.trajectory.filename]
-                except AttributeError:  # Only topology
-                    traj = []
-
-            self.universedef._set_trajectory(traj)
-            self.universedef.kwargs = universe.kwargs
-            # finally, just use this instance
-            self._universe = universe
+        self.universedef.update(universe)
+        self._universe = universe
 
     @universe.deleter
     def universe(self):
-        self.universedef._set_topology(None)
-        self.universedef._set_trajectory([])
-        self.universedef.kwargs = None
-        self.universedef.activate()
+        self.universedef.clear()
+        self._universe = None
 
     @property
     def universedef(self):
         """The universe definition for this Sim.
 
         """
-        # attach universe if not attached, and only give results if a
-        # universe is present thereafter
-        if not self._universedef:
-            self._universedef = limbs.UniverseDefinition(self)
-
         return self._universedef
 
     @property
@@ -127,7 +99,4 @@ class Sim(Treant):
         Useful atom selections can be stored for the universe and
         recalled later.
         """
-        if not self._atomselections:
-            self._atomselections = limbs.AtomSelections(self)
-
         return self._atomselections

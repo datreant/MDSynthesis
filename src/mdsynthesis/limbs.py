@@ -16,7 +16,7 @@ import warnings
 
 from datreant.core import Leaf
 from datreant.core.metadata import Metadata
-from MDAnalysis import Universe
+import MDAnalysis as mda
 
 
 class UniverseDefinition(Metadata):
@@ -166,6 +166,37 @@ class UniverseDefinition(Metadata):
 
         with self._write:
             self._statefile._state['kwargs'] = kwargs
+
+    @property
+    def _args(self):
+        """dict to generate a universe"""
+        kwargs = self.kwargs
+        kwargs['topology'] = self.topology
+        kwargs['trajectory'] = self.trajectory
+        return kwargs
+
+    def _clear(self):
+        self._set_topology(None)
+        self._set_trajectory([])
+        self.kwargs = None
+
+    def update(self, universe):
+        if universe is None:
+            self._clear()
+        elif not isinstance(universe, mda.Universe):
+            raise TypeError("Cannot set to {}; must be Universe".format(
+                type(universe)))
+        else:
+            self.topology = universe.filename
+            try:  # ChainReader?
+                traj = universe.trajectory.filenames
+            except AttributeError:
+                try:  # Reader?
+                    traj = [universe.trajectory.filename]
+                except AttributeError:  # Only topology
+                    traj = []
+            self.trajectory = traj
+            self.kwargs = universe.kwargs
 
 
 class AtomSelections(Metadata):
