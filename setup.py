@@ -31,8 +31,6 @@ setup(name='mdsynthesis',
       long_description=open('README.rst').read(),
       install_requires=[
                 'datreant.core>=0.6.0',
-                'datreant.data>=0.6.0',
-                # TODO: update dependency to 0.16.0 once it's released
-                'MDAnalysis>=0.14.0',
+                'MDAnalysis>=0.16.0',
                 ],
       )
