@@ -10,7 +10,6 @@ from datreant.core import Treant
 from . import limbs
 
 
-# TODO: use composition with `self.treant = ...`
 class Sim(Treant):
     """The Sim object is an interface to data for a single simulation.
 
@@ -51,6 +50,7 @@ class Sim(Treant):
         self._universedef = limbs.UniverseDefinition(self)
         self._atomselections = limbs.AtomSelections(self)
         self._universe = None     # universe 'dock'
+        self._args = self._universedef._args
 
     def __repr__(self):
         return "<{}: '{}'>".format(self._treanttype, self.name)
@@ -67,17 +67,14 @@ class Sim(Treant):
         the universe definition entirely.
 
         """
-        # TODO: include check for changes to universe definition, not just
-        # definition absence
-        # if self._universe:
-        #     return self._universe
-        # else:
-        args = self.universedef._args
-        kwargs = self.universedef.kwargs
-        if args is None:
-            self._universe = None
-        else:
-            self._universe = mda.Universe(*args, **kwargs)
+        _args = self.universedef._args
+        if _args != self._args:
+            self._args = _args
+            kwargs = self.universedef.kwargs
+            if _args is None:
+                self._universe = None
+            else:
+                self._universe = mda.Universe(*_args, **kwargs)
         return self._universe
 
     @universe.setter
