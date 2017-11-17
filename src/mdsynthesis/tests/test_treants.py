@@ -273,7 +273,6 @@ class TestSim(TestTreant):
             assert (ag2.indices == ag3.indices).all()
 
 
-@pytest.mark.skip("not implemented in SIM")
 class TestReadOnly:
     """Test Sim functionality when read-only"""
 
