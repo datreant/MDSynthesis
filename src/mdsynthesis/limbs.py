@@ -322,7 +322,7 @@ class AtomSelections(Metadata):
         """
         with self._read:
             seldict = self._statefile._state
-            return seldict.keys()
+            return list(seldict.keys())
 
     def create(self, handle):
         """Generate AtomGroup from universe from the given named selection.
