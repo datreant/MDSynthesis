@@ -328,8 +328,6 @@ class TestReadOnly:
 
         assert isinstance(s.universe, mda.Universe)
 
-        # since we didn't add any atom selections, should raise KeyError
-        # would be nice if it DIDN'T behave this way, but lazy loading keeps
-        # Sim init cheaper
-        with pytest.raises(KeyError):
-            s.atomselections
+    def test_write_as_readonly(self, sim):
+        with pytest.raises(IOError):
+            sim.atomselections['foo'] = 'bar'
