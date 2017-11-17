@@ -48,13 +48,13 @@ class Sim(Treant):
                                   tags=tags)
 
         self._universedef = limbs.UniverseDefinition(self)
-        self._atomselections = limbs.AtomSelections(self)
         self._args = self._universedef._args
         kwargs = self.universedef.kwargs
         if self._args is None:
             self._universe = None
         else:
             self._universe = mda.Universe(*self._args, **kwargs)
+        self._atomselections = limbs.AtomSelections(self, parent=self)
 
     def __repr__(self):
         return "<{}: '{}'>".format(self._treanttype, self.name)

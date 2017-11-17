@@ -219,6 +219,10 @@ class AtomSelections(Metadata):
         """
         jsonfile._state = {}
 
+    def __init__(self, tree, parent):
+        super(AtomSelections, self).__init__(tree)
+        self._parent = parent
+
     def __repr__(self):
         return "<AtomSelections({})>".format(
             {x: self.get(x)
@@ -342,35 +346,35 @@ class AtomSelections(Metadata):
         """
         pass
 
-    #     sel = self.get(handle)
+        sel = self.get(handle)
 
-    #     # Selections might be either
-    #     # - a single string
-    #     # - a single list of indices
-    #     # - a list of strings
-    #     # - a list of indices
+        # Selections might be either
+        # - a single string
+        # - a single list of indices
+        # - a list of strings
+        # - a list of indices
 
-    #     if isinstance(sel, string_types):
-    #         # if we have a single string
-    #         ag = self._treant.universe.select_atoms(sel)
-    #     elif all([isinstance(i, int) for i in sel]):
-    #         # if we have a single array_like of indices
-    #         ag = self._treant.universe.atoms[sel]
-    #     else:
-    #         ag = None
-    #         for item in sel:
-    #             if isinstance(item, string_types):
-    #                 if ag:
-    #                     ag += self._treant.universe.select_atoms(item)
-    #                 else:
-    #                     ag = self._treant.universe.select_atoms(item)
-    #             else:
-    #                 if ag:
-    #                     ag += self._treant.universe.atoms[item]
-    #                 else:
-    #                     ag = self._treant.universe.atoms[item]
+        if isinstance(sel, string_types):
+            # if we have a single string
+            ag = self._parent.universe.select_atoms(sel)
+        elif all([isinstance(i, int) for i in sel]):
+            # if we have a single array_like of indices
+            ag = self._parent.universe.atoms[sel]
+        else:
+            ag = None
+            for item in sel:
+                if isinstance(item, string_types):
+                    if ag:
+                        ag += self._parent.universe.select_atoms(item)
+                    else:
+                        ag = self._parent.universe.select_atoms(item)
+                else:
+                    if ag:
+                        ag += self._parent.universe.atoms[item]
+                    else:
+                        ag = self._parent.universe.atoms[item]
 
-    #     return ag
+        return ag
 
     def get(self, handle):
         """Get selection definition for given handle.
@@ -388,29 +392,28 @@ class AtomSelections(Metadata):
             list of strings defining the atom selection
 
         """
-        pass
-        # with self._treant._read:
-        #     seldict = self._treant._state['mdsynthesis']['atomselections']
+        with self._read:
+            seldict = self._statefile._state
 
-        # try:
-        #     seldef = seldict[handle]
-        # except KeyError:
-        #     raise KeyError("No such selection '{}'".format(handle))
+        try:
+            seldef = seldict[handle]
+        except KeyError:
+            raise KeyError("No such selection '{}'".format(handle))
 
-        # if isinstance(seldef, string_types):
-        #     # if we have a single string
-        #     out = seldef
-        # elif all([isinstance(i, int) for i in seldef]):
-        #     # if we have a single list of indices
-        #     out = np.array(seldef)
-        # else:
-        #     out = []
-        #     for item in seldef:
-        #         if isinstance(item, string_types):
-        #             out.append(item)
-        #         else:
-        #             out.append(np.array(item))
+        if isinstance(seldef, string_types):
+            # if we have a single string
+            out = seldef
+        elif all([isinstance(i, int) for i in seldef]):
+            # if we have a single list of indices
+            out = np.array(seldef)
+        else:
+            out = []
+            for item in seldef:
+                if isinstance(item, string_types):
+                    out.append(item)
+                else:
+                    out.append(np.array(item))
 
-        #     out = tuple(out)
+            out = tuple(out)
 
-        # return out
+        return out
