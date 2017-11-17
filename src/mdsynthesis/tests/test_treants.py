@@ -139,7 +139,6 @@ class TestSim(TestTreant):
                 s.universedef.trajectory = XTC
             return s
 
-        @pytest.mark.skip("not implemented in SIM")
         def test_add_selection(self, treant):
             """Test adding new selection definitions"""
 
@@ -187,7 +186,6 @@ class TestSim(TestTreant):
 
             assert set(('CA', 'someres')) == set(treant.atomselections.keys())
 
-        @pytest.mark.skip("not implemented in SIM")
         def test_selection_get(self, treant):
             CA = 'protein and name CA'
             treant.atomselections.add('CA', CA)
@@ -195,12 +193,10 @@ class TestSim(TestTreant):
             assert treant.atomselections.get('CA') == CA
             assert treant.atomselections['CA'] == CA
 
-        @pytest.mark.skip("not implemented in SIM")
         def test_selection_get_not_present(self, treant):
             with pytest.raises(KeyError):
                 treant.atomselections['CA']
 
-        @pytest.mark.skip("not implemented in SIM")
         def test_add_atomselections_multiple_strings_via_add(self, treant):
             """Add a selection that has multiple selection strings"""
             treant.atomselections.add('funky town', 'name N', 'name CA')
@@ -210,7 +206,6 @@ class TestSim(TestTreant):
             sel = treant.atomselections.create('funky town')
             assert (ref.indices == sel.indices).all()
 
-        @pytest.mark.skip("not implemented in SIM")
         def test_add_atomselections_multiple_strings_via_setitem(self, treant):
             """Add a selection that has multiple selection strings"""
             treant.atomselections['funky town 2'] = 'name N', 'name CA'
@@ -220,7 +215,6 @@ class TestSim(TestTreant):
             sel = treant.atomselections.create('funky town 2')
             assert (ref.indices == sel.indices).all()
 
-        @pytest.mark.skip("not implemented in SIM")
         def test_add_selection_as_indices_via_add(self, treant):
             """Make an arbitrary AtomGroup then save selection as AG"""
             ag = treant.universe.atoms[:10:2]
@@ -231,7 +225,6 @@ class TestSim(TestTreant):
             ag2 = treant.atomselections.create('ag sel')
             assert (ag.indices == ag2.indices).all()
 
-        @pytest.mark.skip("not implemented in SIM")
         def test_add_selection_as_indices_via_setitem(self, treant):
             """Make an arbitrary AtomGroup then save selection as AG"""
             ag = treant.universe.atoms[25:50:3]
@@ -242,7 +235,6 @@ class TestSim(TestTreant):
             ag2 = treant.atomselections.create('ag sel 2')
             assert (ag.indices == ag2.indices).all()
 
-        @pytest.mark.skip("not implemented in SIM")
         def test_add_selection_as_mix_via_setitem(self, treant):
             """Save a selection as a mixture of atom indices and strings"""
             ag = treant.universe.atoms[25:50:3]
@@ -257,7 +249,6 @@ class TestSim(TestTreant):
             ag3 = treant.universe.select_atoms('protein and name CA') + ag
             assert (ag2.indices == ag3.indices).all()
 
-        @pytest.mark.skip("not implemented in SIM")
         def test_add_selection_as_mix_via_add(self, treant):
             """Save a selection as a mixture of atom indices and strings"""
             ag = treant.universe.atoms[25:50:3]
@@ -328,6 +319,7 @@ class TestReadOnly:
 
         assert isinstance(s.universe, mda.Universe)
 
+    @pytest.mark.skip("impl in datreant.core")
     def test_write_as_readonly(self, sim):
         with pytest.raises(IOError):
             sim.atomselections['foo'] = 'bar'
