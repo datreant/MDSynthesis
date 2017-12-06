@@ -72,9 +72,6 @@ class TestSim(TestTreant):
             assert treant.universedef.topology == GRO
             assert treant.universedef.trajectory == (XTC, XTC)
 
-        @pytest.mark.skipif((parse_version(mda.__version__) <
-                            parse_version('0.15.0')),
-                            reason="requires MDAnalysis >= 0.15.0")
         def test_set_universe_with_kwargs(self, treant):
             """Universe should preserve its kwargs, if possible.
 
