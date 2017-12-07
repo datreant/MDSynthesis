@@ -18,6 +18,8 @@ from datreant.core import Leaf
 from datreant.core.metadata import Metadata
 import MDAnalysis as mda
 
+from .names import SIMDIR_NAME
+
 
 class UniverseDefinition(Metadata):
     """The defined universe of the Sim.
@@ -28,7 +30,7 @@ class UniverseDefinition(Metadata):
     """
     # _name = 'universedef'
     # _filepaths = ['abs', 'rel']
-    _statefilename = 'universedef.json'
+    _statefilename = os.path.join(SIMDIR_NAME, 'universedef.json')
 
     @staticmethod
     def _init_state(jsonfile):
@@ -209,7 +211,7 @@ class AtomSelections(Metadata):
     Useful atom selections can be stored for the universe and recalled later.
 
     """
-    _statefilename = 'atomselections.json'
+    _statefilename = os.path.join(SIMDIR_NAME, 'atomselections.json')
 
     @staticmethod
     def _init_state(jsonfile):

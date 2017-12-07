@@ -3,10 +3,14 @@ Basic Treant objects: the organizational units for :mod:`mdsynthesis`.
 
 """
 import warnings
+import os
 
 import MDAnalysis as mda
 
 from datreant.core import Treant
+from datreant.core.names import TREANTDIR_NAME
+from datreant.core.util import makedirs
+from .names import SIMDIR_NAME
 from . import limbs
 
 
@@ -48,16 +52,34 @@ class Sim(Treant):
                                   tags=tags)
 
         self._universedef = limbs.UniverseDefinition(self)
-        self._args = self._universedef._args
-        kwargs = self.universedef.kwargs
-        if self._args is None:
-            self._universe = None
-        else:
-            self._universe = mda.Universe(*self._args, **kwargs)
+        self._universe = None
+        self._args = None
         self._atomselections = limbs.AtomSelections(self, parent=self)
+
+        # make simdir
+        self._make_simdir()
 
     def __repr__(self):
         return "<{}: '{}'>".format(self._treanttype, self.name)
+
+    def _make_simdir(self):
+        abspath = self._path.absolute()
+        simdir = abspath / os.path.join(TREANTDIR_NAME, SIMDIR_NAME)
+
+        if not simdir.exists():
+            # build mdsynthesis dir; stop if we hit a permissions error
+            try:
+                makedirs(simdir, exist_ok=True)
+            except OSError as e:
+                if e.errno == 13:
+                    raise OSError(13, "Permission denied; " +
+                                  "cannot create '{}'".format(simdir))
+                else:
+                    raise
+
+    @property
+    def _simdir(self):
+        return os.path.join(self.abspath, TREANTDIR_NAME, SIMDIR_NAME)
 
     @property
     def universe(self):

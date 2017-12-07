@@ -1,0 +1,1 @@
+SIMDIR_NAME = 'mdsynthesis'
