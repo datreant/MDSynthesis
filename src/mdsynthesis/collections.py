@@ -1,6 +1,7 @@
 import os
 
 from datreant.core import Bundle as _Bundle
+from datreant.core import View
 from datreant.core.names import TREANTDIR_NAME
 
 from .names import SIMDIR_NAME
@@ -14,6 +15,13 @@ class Bundle(_Bundle):
 
     def _add(self, *sims):
 
-        # we only add Treants that are actually Sims
-        filtered = [Sim(sim) for sim in sims if self._is_sim(sim)]
+        filtered = list()
+        for sim in sims:
+            if sim is None:
+                pass
+            elif isinstance(sim, (list, tuple, View, _Bundle)):
+                self._add(*sim)
+            elif self._is_sim(sim):
+                filtered.append(Sim(os.path.abspath(sim)))
+
         super(Bundle, self)._add(*filtered)

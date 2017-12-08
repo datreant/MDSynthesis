@@ -8,11 +8,11 @@ MDSynthesis --- a persistence engine for molecular dynamics data
 ================================================================
 """
 # Bring some often used objects into the current namespace
-from datreant.core import Tree, Leaf, View
+from datreant.core import Tree, Leaf, View, Bundle
 from datreant.core import discover
 
 from .treants import Sim
-from .collections import Bundle
+#from .collections import Bundle
 from .manipulators import discover
 
 __all__ = ['Sim', 'Bundle', 'discover', 'Tree', 'Leaf', 'View']
