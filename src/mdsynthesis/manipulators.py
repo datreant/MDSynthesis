@@ -12,7 +12,9 @@ from .names import SIMDIR_NAME
 
 
 def _is_sim(treant):
-    return os.path.exists(os.path.join(treant, TREANTDIR_NAME, SIMDIR_NAME))
+    return os.path.exists(os.path.join(treant.abspath,
+                                       TREANTDIR_NAME,
+                                       SIMDIR_NAME))
 
 
 def discover(dirpath='.', depth=None, treantdepth=None):
