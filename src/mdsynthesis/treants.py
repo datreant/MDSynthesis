@@ -11,7 +11,7 @@ from datreant.core import Treant
 from datreant.core.names import TREANTDIR_NAME
 from datreant.core.util import makedirs
 from .names import SIMDIR_NAME
-from . import limbs
+from . import metadata
 
 
 class Sim(Treant):
@@ -51,10 +51,10 @@ class Sim(Treant):
                                   categories=categories,
                                   tags=tags)
 
-        self._universedef = limbs.UniverseDefinition(self)
+        self._universedef = metadata.UniverseDefinition(self)
         self._universe = None
         self._args = None
-        self._atomselections = limbs.AtomSelections(self, parent=self)
+        self._atomselections = metadata.AtomSelections(self, parent=self)
 
         # make simdir
         self._make_simdir()

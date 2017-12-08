@@ -1,11 +1,8 @@
 """
-Limbs are user interfaces for accessing stored data, as well as querying
-the state of an object (data loaded, universe attached, etc.). They are also
-used to aggregate the functionality of higher level objects (such as Sim) in
-ways that are user-friendly.
-
-In short, an Limb is designed to be user friendly on its own, but are
-often used as components of a Treant.
+Metadata compoenents are user interfaces for accessing stored data, as well as
+querying the state of an object (data loaded, universe attached, etc.). They
+are also used to aggregate the functionality of higher level objects (such as
+Sim) in ways that are user-friendly.
 
 """
 import os

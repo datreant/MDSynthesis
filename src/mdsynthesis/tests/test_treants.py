@@ -1,4 +1,4 @@
-"""Interface tests for Treants.
+"""Interface tests for Sims.
 
 """
 
