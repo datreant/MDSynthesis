@@ -12,7 +12,6 @@ from datreant.core import Tree, Leaf, View, Bundle
 from datreant.core import discover
 
 from .treants import Sim
-#from .collections import Bundle
 from .manipulators import discover
 
 __all__ = ['Sim', 'Bundle', 'discover', 'Tree', 'Leaf', 'View']
