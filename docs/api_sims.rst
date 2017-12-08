@@ -22,10 +22,10 @@ The class :class:`mdsynthesis.Sim` is the central object of ``mdsynthesis``.
 
 UniverseDefinition
 ``````````````````
-The class :class:`mdsynthesis.limbs.UniverseDefinition` is the interface used by a Sim to
+The class :class:`mdsynthesis.metadata.UniverseDefinition` is the interface used by a Sim to
 define its :class:`MDAnalysis.Universe`.
 
-.. autoclass:: mdsynthesis.limbs.UniverseDefinition
+.. autoclass:: mdsynthesis.metadata.UniverseDefinition
     :members:
     :inherited-members:
 
@@ -33,9 +33,9 @@ define its :class:`MDAnalysis.Universe`.
 
 AtomSelections
 ``````````````
-The class :class:`mdsynthesis.limbs.AtomSelections` is the interface used by Sims to
+The class :class:`mdsynthesis.metadata.AtomSelections` is the interface used by Sims to
 get :class:`MDAnalysis.AtomGroup` objects from stored selection definitions. 
 
-.. autoclass:: mdsynthesis.limbs.AtomSelections
+.. autoclass:: mdsynthesis.metadata.AtomSelections
     :members:
     :inherited-members:

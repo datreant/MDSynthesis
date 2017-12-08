@@ -138,7 +138,7 @@ kinase, the protein we simulated. We can store these immediately::
     >>> s.atomselections['core'] = ('resid 1:29', 'resid 60:121', 'resid 160:214')
 
 We can now get new AtomGroups back for each selection at any time with the 
-:meth:`~mdsynthesis.limbs.AtomSelections.create` method::
+:meth:`~mdsynthesis.metadata.AtomSelections.create` method::
 
     >>> s.atomselections.create('lid')
     <AtomGroup with 598 atoms>
@@ -161,7 +161,7 @@ work with many variants of a simulation system without having to micromanage.
           alignments.
 
 Want just the selection strings back? We can use
-:meth:`~mdsynthesis.limbs.AtomSelections.get`::
+:meth:`~mdsynthesis.metadata.AtomSelections.get`::
 
     >>> s.atomselections.get('lid')
     'resid 122:159'
@@ -182,7 +182,7 @@ indices instead of as a selection string? That can be done, too::
 
 Lists/tuples of selection strings or atom indices can be stored in any combination
 as a selection. These are applied in order to yield the AtomGroup when calling the 
-:meth:`~mdsynthesis.limbs.AtomSelections.create` method.
+:meth:`~mdsynthesis.metadata.AtomSelections.create` method.
 
 API Reference: AtomSelections
 -----------------------------
