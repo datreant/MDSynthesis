@@ -6,11 +6,6 @@ exposed in the MDSynthesis namespace.
 
 .. currentmodule:: datreant.core
 
-Functions
-=========
-.. autosummary::
-    discover
-
 Classes
 =======
 .. autosummary::
@@ -19,7 +14,6 @@ Classes
     Leaf
     View
     Bundle
-    Group
 
 Learning more
 =============

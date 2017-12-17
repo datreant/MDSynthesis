@@ -3,12 +3,15 @@ Basic Treant objects: the organizational units for :mod:`mdsynthesis`.
 
 """
 import warnings
+import os
 
-from MDAnalysis import Universe
+import MDAnalysis as mda
 
 from datreant.core import Treant
-from . import limbs
-from .backends import statefiles
+from datreant.core.names import TREANTDIR_NAME
+from datreant.core.util import makedirs
+from .names import SIMDIR_NAME
+from . import metadata
 
 
 class Sim(Treant):
@@ -34,8 +37,6 @@ class Sim(Treant):
         Base directory of a new or existing Sim; will regenerate a Sim if a
         state file is found, but will genereate a new one otherwise; may also
         be a Tree object
-    new : bool
-        Generate a new Sim even if one already exists at the given location
     categories : dict
         dictionary with user-defined keys and values; used to give Sims
         distinguishing characteristics
@@ -44,20 +45,41 @@ class Sim(Treant):
         many distinguishing descriptors
     """
     _treanttype = 'Sim'
-    _backendclass = statefiles.SimFile
 
-    def __init__(self, sim, new=False, categories=None, tags=None):
+    def __init__(self, sim, categories=None, tags=None):
         super(Sim, self).__init__(sim,
-                                  new=new,
                                   categories=categories,
                                   tags=tags)
 
-        self._universedef = None
-        self._atomselections = None
-        self._universe = None     # universe 'dock'
+        self._universedef = metadata.UniverseDefinition(self)
+        self._universe = None
+        self._args = None
+        self._atomselections = metadata.AtomSelections(self, parent=self)
+
+        # make simdir
+        self._make_simdir()
 
     def __repr__(self):
         return "<{}: '{}'>".format(self._treanttype, self.name)
+
+    def _make_simdir(self):
+        abspath = self._path.absolute()
+        simdir = abspath / os.path.join(TREANTDIR_NAME, SIMDIR_NAME)
+
+        if not simdir.exists():
+            # build mdsynthesis dir; stop if we hit a permissions error
+            try:
+                makedirs(simdir, exist_ok=True)
+            except OSError as e:
+                if e.errno == 13:
+                    raise OSError(13, "Permission denied; " +
+                                  "cannot create '{}'".format(simdir))
+                else:
+                    raise
+
+    @property
+    def _simdir(self):
+        return os.path.join(self.abspath, TREANTDIR_NAME, SIMDIR_NAME)
 
     @property
     def universe(self):
@@ -71,57 +93,26 @@ class Sim(Treant):
         the universe definition entirely.
 
         """
-        # TODO: include check for changes to universe definition, not just
-        # definition absence
-        if self._universe:
-            return self._universe
-        else:
-            self.universedef._activate()
-            return self._universe
+        _args = self.universedef._args
+        if _args != self._args:
+            self._args = _args
+            kwargs = self.universedef.kwargs
+            if _args is None:
+                self._universe = None
+            else:
+                self._universe = mda.Universe(*_args, **kwargs)
+        return self._universe
 
     @universe.setter
     def universe(self, universe):
-        if universe is None:
-            self.universedef._set_topology(None)
-            self.universedef._set_trajectory([])
-            self.universedef.kwargs = None
-            self.universedef.activate()
-
-        elif not isinstance(universe, Universe):
-            raise TypeError("Cannot set to {}; must be Universe".format(
-                                type(universe)))
-        else:
-            self.universedef._set_topology(universe.filename)
-            try:  # ChainReader?
-                traj = universe.trajectory.filenames
-            except AttributeError:
-                try:  # Reader?
-                    traj = [universe.trajectory.filename]
-                except AttributeError:  # Only topology
-                    traj = []
-
-            self.universedef._set_trajectory(traj)
-            self.universedef.kwargs = universe.kwargs
-            # finally, just use this instance
-            self._universe = universe
-
-    @universe.deleter
-    def universe(self):
-        self.universedef._set_topology(None)
-        self.universedef._set_trajectory([])
-        self.universedef.kwargs = None
-        self.universedef.activate()
+        self.universedef.update(universe)
+        self._universe = universe
 
     @property
     def universedef(self):
         """The universe definition for this Sim.
 
         """
-        # attach universe if not attached, and only give results if a
-        # universe is present thereafter
-        if not self._universedef:
-            self._universedef = limbs.UniverseDefinition(self)
-
         return self._universedef
 
     @property
@@ -131,7 +122,4 @@ class Sim(Treant):
         Useful atom selections can be stored for the universe and
         recalled later.
         """
-        if not self._atomselections:
-            self._atomselections = limbs.AtomSelections(self)
-
         return self._atomselections

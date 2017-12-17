@@ -8,6 +8,8 @@ addons:
 
 python:
   - "2.7"
+  - "3.5"
+  - "3.6"
 
 # whitelist
 branches:
@@ -22,7 +24,7 @@ env:
 
 matrix:
   allow_failures:
-    - env: DATREANT_DEV="true"
+    - env: DATREANT_DEV="false"
 
 # install python dependencies
 install:

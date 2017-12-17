@@ -1,4 +1,4 @@
-"""Interface tests for Treants.
+"""Interface tests for Sims.
 
 """
 
@@ -72,9 +72,6 @@ class TestSim(TestTreant):
             assert treant.universedef.topology == GRO
             assert treant.universedef.trajectory == (XTC, XTC)
 
-        @pytest.mark.skipif((parse_version(mda.__version__) <
-                            parse_version('0.15.0')),
-                            reason="requires MDAnalysis >= 0.15.0")
         def test_set_universe_with_kwargs(self, treant):
             """Universe should preserve its kwargs, if possible.
 
@@ -127,40 +124,6 @@ class TestSim(TestTreant):
 
             assert isinstance(treant.universe, mda.Universe)
             assert treant.universe.trajectory.n_frames == 1
-
-        def test_set_resnums(self, treant):
-            """Test that we can add resnums to a universe."""
-            treant.universedef.topology = GRO
-            treant.universedef.trajectory = XTC
-
-            protein = treant.universe.select_atoms('protein')
-            resids = protein.residues.resids
-            # Compatibility for MDAnalysis pre 0.16.0
-            try:
-                protein.residues.resnums = resids + 3
-            except AttributeError:
-                protein.residues.set_resnum(resids + 3)
-
-            treant.universedef._set_resnums(treant.universe.residues.resnums)
-
-            treant.universedef.reload()
-
-            protein = treant.universe.select_atoms('protein')
-            assert (resids + 3 == protein.residues.resnums).all()
-
-            # Compatibility for MDAnalysis pre 0.16.0
-            try:
-                protein.residues.resnums = resids + 6
-            except AttributeError:
-                protein.residues.set_resnum(resids + 6)
-
-            assert (protein.residues.resnums == resids + 6).all()
-            treant.universedef._set_resnums(treant.universe.residues.resnums)
-
-            treant.universedef.reload()
-
-            protein = treant.universe.select_atoms('protein')
-            assert (resids + 6 == protein.residues.resnums).all()
 
     class TestSelections:
         """Test stored atomselections functionality"""
@@ -319,6 +282,8 @@ class TestReadOnly:
             c.universedef.topology = GRO_t.strpath
             c.universedef.trajectory = XTC_t.strpath
 
+            c.atomselections['aspartates'] = 'resname ASP'
+
             py.path.local(c.abspath).chmod(0o0550, rec=True)
 
         def fin():
@@ -353,8 +318,9 @@ class TestReadOnly:
 
         assert isinstance(s.universe, mda.Universe)
 
-        # since we didn't add any atom selections, should raise KeyError
-        # would be nice if it DIDN'T behave this way, but lazy loading keeps
-        # Sim init cheaper
-        with pytest.raises(KeyError):
-            s.atomselections
+    def test_write_as_readonly(self, sim):
+        with pytest.raises((IOError, OSError)):
+            sim.atomselections['foo'] = 'bar'
+
+    def test_get_atomselection_as_readonly(self, sim):
+        assert sim.atomselections['aspartates'] == 'resname ASP'
