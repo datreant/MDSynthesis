@@ -316,7 +316,6 @@ class TestReadOnly:
 
         assert isinstance(s.universe, mda.Universe)
 
-    @pytest.mark.skip("impl in datreant.core")
     def test_write_as_readonly(self, sim):
         with pytest.raises(IOError):
             sim.atomselections['foo'] = 'bar'
