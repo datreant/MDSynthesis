@@ -282,6 +282,8 @@ class TestReadOnly:
             c.universedef.topology = GRO_t.strpath
             c.universedef.trajectory = XTC_t.strpath
 
+            c.atomselections['aspartates'] = 'resname ASP'
+
             py.path.local(c.abspath).chmod(0o0550, rec=True)
 
         def fin():
@@ -317,5 +319,8 @@ class TestReadOnly:
         assert isinstance(s.universe, mda.Universe)
 
     def test_write_as_readonly(self, sim):
-        with pytest.raises(IOError):
+        with pytest.raises((IOError, OSError)):
             sim.atomselections['foo'] = 'bar'
+
+    def test_get_atomselection_as_readonly(self, sim):
+        assert sim.atomselections['aspartates'] == 'resname ASP'

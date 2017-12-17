@@ -108,11 +108,6 @@ class Sim(Treant):
         self.universedef.update(universe)
         self._universe = universe
 
-    @universe.deleter
-    def universe(self):
-        self.universedef.clear()
-        self._universe = None
-
     @property
     def universedef(self):
         """The universe definition for this Sim.
