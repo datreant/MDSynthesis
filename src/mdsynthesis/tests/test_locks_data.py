@@ -4,37 +4,28 @@ import pytest
 import numpy as np
 import pandas as pd
 
-import datreant.core as dtr
-import datreant.data.attach
-
-from datreant.core.backends.statefiles import TreantFile
+import mdsynthesis as mds
 
 
 def append(treantfilepath, df):
-    treant = dtr.Treant(treantfilepath)
-    treant.data.append('testdata', df)
+    sim = mds.Sim(treantfilepath)
+    sim.data.append('testdata', df)
 
 
 class TestTreantFile:
 
     @pytest.fixture
-    def treant(self, tmpdir):
+    def sim(self, tmpdir):
         with tmpdir.as_cwd():
-            t = dtr.treants.Treant('sprout')
+            t = mds.Sim('sprout')
         return t
-
-    @pytest.fixture
-    def treantfile(self, tmpdir):
-        with tmpdir.as_cwd():
-            tf = TreantFile('testtreantfile.json')
-        return tf
 
     @pytest.fixture
     def dataframe(self):
         data = np.random.rand(100, 3)
         return pd.DataFrame(data, columns=('A', 'B', 'C'))
 
-    def test_async_append(self, treant, dataframe):
+    def test_async_append(self, sim, dataframe):
         pool = mp.Pool(processes=4)
         num = 53
         for i in range(num):
