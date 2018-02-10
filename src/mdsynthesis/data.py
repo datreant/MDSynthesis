@@ -1,20 +1,19 @@
-"""
-Limbs for convenient Treant data storage and retrieval.
-
-"""
-import os
+from datreant.core.util import makedirs
 from functools import wraps
+import six
+import os
 
-from datreant.core.limbs import TreeLimb
-from . import npdata, pddata, pydata
-from .core import DataFile
+from .persistent_dict import npdata, pddata, pydata
+from .persistent_dict.core import DataFile
 
 
-class Data(TreeLimb):
+class Data(object):
     """Interface to stored data.
 
     """
-    _name = 'data'
+
+    def __init__(self, treant):
+        self.treant = treant
 
     def __repr__(self):
         return "<Data({})>".format(self.keys())
@@ -45,7 +44,7 @@ class Data(TreeLimb):
                 directory path to make
         """
         try:
-            os.makedirs(p)
+            makedirs(p)
         except OSError:
             pass
 
@@ -70,12 +69,11 @@ class Data(TreeLimb):
         datafiletype = None
         for dfiletype in (pddata.pddatafile, npdata.npdatafile,
                           pydata.pydatafile):
-            dfile = os.path.join(self._tree.abspath,
-                                 handle, dfiletype)
+            dfile = os.path.join(self._tree.abspath, handle, dfiletype)
             if os.path.exists(dfile):
                 datafile = dfile
-                proxyfile = os.path.join(self._tree.abspath,
-                                         handle, ".{}.proxy".format(dfiletype))
+                proxyfile = os.path.join(self._tree.abspath, handle,
+                                         ".{}.proxy".format(dfiletype))
                 datafiletype = dfiletype
 
         if datafile is None and datafiletype is None:
@@ -95,15 +93,15 @@ class Data(TreeLimb):
                   the first argument.
 
         """
+
         @wraps(func)
         def inner(self, handle, *args, **kwargs):
             filename, proxy, filetype = self._get_datafile(handle)
 
             if filename:
                 self._datafile = DataFile(
-                        os.path.join(self._tree.abspath,
-                                     handle),
-                        datafiletype=filetype)
+                    os.path.join(self._tree.abspath, handle),
+                    datafiletype=filetype)
                 try:
                     out = func(self, handle, *args, **kwargs)
                 finally:
@@ -127,6 +125,7 @@ class Data(TreeLimb):
                   the first argument.
 
         """
+
         @wraps(func)
         def inner(self, handle, *args, **kwargs):
             dirname = os.path.join(self._tree.abspath, handle)
@@ -386,9 +385,8 @@ class Data(TreeLimb):
         datasets = list()
         top = self._tree.abspath
         for root, dirs, files in os.walk(top):
-            if ((pddata.pddatafile in files) or
-                    (npdata.npdatafile in files) or
-                    (pydata.pydatafile in files)):
+            if ((pddata.pddatafile in files) or (npdata.npdatafile in files)
+                    or (pydata.pydatafile in files)):
                 datasets.append(os.path.relpath(root, start=top))
 
         datasets.sort()

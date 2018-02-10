@@ -4,6 +4,7 @@ Basic Treant objects: the organizational units for :mod:`mdsynthesis`.
 """
 import warnings
 import os
+from functools import wraps
 
 import MDAnalysis as mda
 
@@ -12,6 +13,7 @@ from datreant.core.names import TREANTDIR_NAME
 from datreant.core.util import makedirs
 from .names import SIMDIR_NAME
 from . import metadata
+from .data import Data
 
 
 class Sim(Treant):
@@ -58,6 +60,7 @@ class Sim(Treant):
 
         # make simdir
         self._make_simdir()
+        self._data = Data(self)
 
     def __repr__(self):
         return "<{}: '{}'>".format(self._treanttype, self.name)
@@ -128,3 +131,7 @@ class Sim(Treant):
         recalled later.
         """
         return self._atomselections
+
+    @property
+    def data(self):
+        return self._data
