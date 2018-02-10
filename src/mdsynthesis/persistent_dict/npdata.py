@@ -7,7 +7,6 @@ import h5py
 
 from datreant.core.backends.core import File
 
-
 npdatafile = 'npData.h5'
 
 
@@ -19,6 +18,7 @@ class npDataFile(File):
     its backend.
 
     """
+
     def _open_file_r(self):
         return h5py.File(self.filename, 'r')
 

@@ -7,7 +7,6 @@ from six.moves import cPickle as pickle
 
 from datreant.core.backends.core import File
 
-
 pydatafile = 'pyData.pkl'
 
 
@@ -20,6 +19,7 @@ class pyDataFile(File):
     serialization.
 
     """
+
     def _open_file_r(self):
         return open(self.filename, 'rb')
 

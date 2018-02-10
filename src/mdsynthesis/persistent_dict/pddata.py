@@ -6,9 +6,7 @@ File backends for storing pandas objects.
 import pandas as pd
 import numpy as np
 
-
 from datreant.core.backends.core import File
-
 
 pddatafile = 'pdData.h5'
 
@@ -22,6 +20,7 @@ class pdDataFile(File):
     backend.
 
     """
+
     def _open_file_r(self):
         return pd.HDFStore(self.filename, 'r')
 
@@ -46,12 +45,16 @@ class pdDataFile(File):
             try:
                 # FIXME: band-aid heuristic to catch a known corner case that
                 # HDFStore doesn't catch; see ``Issue 20``
-                if (isinstance(data, pd.DataFrame) and
-                        data.columns.dtype == np.dtype('int64')):
+                if (isinstance(data, pd.DataFrame)
+                        and data.columns.dtype == np.dtype('int64')):
                     raise AttributeError
 
                 self.handle.put(
-                    key, data, format='table', data_columns=True, complevel=5,
+                    key,
+                    data,
+                    format='table',
+                    data_columns=True,
+                    complevel=5,
                     complib='blosc')
             except AttributeError:
                 self.handle.put(
