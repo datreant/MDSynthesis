@@ -2,6 +2,8 @@
 Basic Treant objects: the organizational units for :mod:`mdsynthesis`.
 
 """
+from __future__ import absolute_import
+
 import warnings
 import os
 from functools import wraps
