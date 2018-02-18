@@ -128,7 +128,7 @@ class Data(object):
 
         @wraps(func)
         def inner(self, handle, *args, **kwargs):
-            dirname = os.path.join(self._tree.abspath, handle)
+            dirname = os.path.join(self.treant.abspath, handle)
 
             self._makedirs(dirname)
             self._datafile = DataFile(dirname)
