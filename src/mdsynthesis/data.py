@@ -385,8 +385,9 @@ class Data(object):
         datasets = list()
         top = self.treant.abspath
         for root, dirs, files in os.walk(top):
-            if ((pddata.pddatafile in files) or (npdata.npdatafile in files)
-                    or (pydata.pydatafile in files)):
+            if ((pddata.pddatafile in files) or
+                    (npdata.npdatafile in files) or
+                    (pydata.pydatafile in files)):
                 datasets.append(os.path.relpath(root, start=top))
         datasets.sort()
         return datasets

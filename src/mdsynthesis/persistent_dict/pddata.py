@@ -45,8 +45,8 @@ class pdDataFile(File):
             try:
                 # FIXME: band-aid heuristic to catch a known corner case that
                 # HDFStore doesn't catch; see ``Issue 20``
-                if (isinstance(data, pd.DataFrame)
-                        and data.columns.dtype == np.dtype('int64')):
+                if (isinstance(data, pd.DataFrame) and
+                        data.columns.dtype == np.dtype('int64')):
                     raise AttributeError
 
                 self.handle.put(
