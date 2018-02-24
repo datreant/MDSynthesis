@@ -29,9 +29,9 @@ class TestTreantFile:
         pool = mp.Pool(processes=4)
         num = 53
         for i in range(num):
-            pool.apply_async(append, args=(treant.filepath,
+            pool.apply_async(append, args=(sim.abspath,
                                            dataframe))
         pool.close()
         pool.join()
 
-        assert len(treant.data['testdata']) == len(dataframe)*(num+0)
+        assert len(sim.data['testdata']) == len(dataframe)*(num+0)

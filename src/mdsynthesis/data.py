@@ -69,10 +69,10 @@ class Data(object):
         datafiletype = None
         for dfiletype in (pddata.pddatafile, npdata.npdatafile,
                           pydata.pydatafile):
-            dfile = os.path.join(self._tree.abspath, handle, dfiletype)
+            dfile = os.path.join(self.treant.abspath, handle, dfiletype)
             if os.path.exists(dfile):
                 datafile = dfile
-                proxyfile = os.path.join(self._tree.abspath, handle,
+                proxyfile = os.path.join(self.treant.abspath, handle,
                                          ".{}.proxy".format(dfiletype))
                 datafiletype = dfiletype
 
@@ -100,7 +100,7 @@ class Data(object):
 
             if filename:
                 self._datafile = DataFile(
-                    os.path.join(self._tree.abspath, handle),
+                    os.path.join(self.treant.abspath, handle),
                     datafiletype=filetype)
                 try:
                     out = func(self, handle, *args, **kwargs)
@@ -248,7 +248,7 @@ class Data(object):
         elif datafile:
             os.remove(datafile)
             os.remove(proxy)
-            top = self._tree.abspath
+            top = self.treant.abspath
             directory = os.path.dirname(datafile)
             while directory != top:
                 try:
@@ -295,7 +295,7 @@ class Data(object):
 
             os.remove(datafile)
             os.remove(proxy)
-            top = self._tree.abspath
+            top = self.treant.abspath
             directory = os.path.dirname(datafile)
             while directory != top:
                 try:
@@ -383,12 +383,10 @@ class Data(object):
 
         """
         datasets = list()
-        top = self._tree.abspath
+        top = self.treant.abspath
         for root, dirs, files in os.walk(top):
             if ((pddata.pddatafile in files) or (npdata.npdatafile in files)
                     or (pydata.pydatafile in files)):
                 datasets.append(os.path.relpath(root, start=top))
-
         datasets.sort()
-
         return datasets
