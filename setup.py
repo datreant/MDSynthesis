@@ -32,5 +32,6 @@ setup(name='mdsynthesis',
       install_requires=[
                 'datreant.core>=0.6.0',
                 'MDAnalysis>=0.16.0',
+                'pytables', 'numpy', 'pandas'
                 ],
       )

@@ -32,7 +32,7 @@ install:
   - pip install --upgrade pytest
   - pip install pytest-cov
   - pip install pytest-pep8
-  - pip install numpy numexpr Cython pandas h5py
+  - pip install numpy numexpr Cython pandas h5py pytables
   - pip install MDAnalysisTests
   - |
     if [[ $DATREANT_DEV == 'true' ]]; then \
