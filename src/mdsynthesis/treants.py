@@ -10,9 +10,9 @@ from functools import wraps
 
 import MDAnalysis as mda
 
-from datreant.core import Treant
-from datreant.core.names import TREANTDIR_NAME
-from datreant.core.util import makedirs
+from datreant import Treant
+from datreant.names import TREANTDIR_NAME
+from datreant.util import makedirs
 from .names import SIMDIR_NAME
 from . import metadata
 from .data import Data

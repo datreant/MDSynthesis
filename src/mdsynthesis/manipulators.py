@@ -3,9 +3,9 @@
 """
 import os
 
-from datreant.core import discover as _discover
-from datreant.core import Bundle
-from datreant.core.names import TREANTDIR_NAME
+from datreant import discover as _discover
+from datreant import Bundle
+from datreant.names import TREANTDIR_NAME
 
 from .treants import Sim
 from .names import SIMDIR_NAME
