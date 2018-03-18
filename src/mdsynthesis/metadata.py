@@ -11,8 +11,8 @@ import numpy as np
 from numpy.lib.utils import deprecate
 import warnings
 
-from datreant.core import Leaf
-from datreant.core.metadata import Metadata
+from datreant import Leaf
+from datreant.metadata import Metadata
 import MDAnalysis as mda
 
 from .names import SIMDIR_NAME

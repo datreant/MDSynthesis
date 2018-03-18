@@ -1,4 +1,4 @@
-import datreant.core as dtr
+import datreant as dtr
 import mdsynthesis as mds
 
 

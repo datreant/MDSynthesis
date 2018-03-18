@@ -30,7 +30,8 @@ setup(name='mdsynthesis',
       license='GPL 2',
       long_description=open('README.rst').read(),
       install_requires=[
-                'datreant.core>=0.6.0',
+                'datreant',
                 'MDAnalysis>=0.16.0',
+                'tables', 'h5py', 'numpy', 'pandas'
                 ],
       )
