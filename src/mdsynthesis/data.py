@@ -1,4 +1,4 @@
-from datreant.core.util import makedirs
+from datreant.util import makedirs
 from functools import wraps
 import six
 import os

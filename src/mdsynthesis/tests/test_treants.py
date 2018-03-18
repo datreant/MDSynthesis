@@ -7,7 +7,7 @@ import pytest
 import py
 from pkg_resources import parse_version
 
-from datreant.core.tests.test_treants import TestTreant
+from datreant.tests.test_treants import TestTreant
 
 import MDAnalysis as mda
 from MDAnalysisTests.datafiles import PDB, GRO, XTC, PSF

@@ -5,7 +5,7 @@ File backends for storing numpy arrays.
 
 import h5py
 
-from datreant.core.state import BaseFile as File
+from datreant.state import BaseFile as File
 
 npdatafile = 'npData.h5'
 

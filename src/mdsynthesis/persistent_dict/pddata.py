@@ -6,7 +6,7 @@ File backends for storing pandas objects.
 import pandas as pd
 import numpy as np
 
-from datreant.core.state import BaseFile as File
+from datreant.state import BaseFile as File
 
 pddatafile = 'pdData.h5'
 
