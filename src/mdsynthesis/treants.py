@@ -62,9 +62,6 @@ class Sim(Treant):
 
         # make simdir
         self._make_simdir()
-
-        # make simdir
-        self._make_simdir()
         self._data = Data(self)
 
     def __repr__(self):
