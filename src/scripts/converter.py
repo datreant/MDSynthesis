@@ -17,17 +17,19 @@ def convert(folder):
     # update universe definition
     udef = old_sim['universedef']
     if udef['topology']:
-        args = [udef['topology'],]
+        args = [udef['topology']['abspath'],]
         if udef['trajectory']:
-            args.append(udef['trajectory'])
+            args.append([abspath for abspath, relpath in udef['trajectory']])
         u = mda.Universe(*args, **udef['kwargs'])
         sim.universe = u
 
     # update atom selection
-    atom_sel = old_sim['atomselections']
-    for key, val in six.iteritems(atom_sel):
-        sim.atomselections[key] = val
-
+    try:
+        atom_sel = old_sim['atomselections']
+        for key, val in six.iteritems(atom_sel):
+            sim.atomselections[key] = val
+    except KeyError:
+        pass
 
 if __name__ == '__main__':
     import argparse
