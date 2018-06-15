@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 import mdsynthesis as mds
 import MDAnalysis as mda
+import warnings
 import json
 from os import path
 from glob import glob
@@ -8,7 +9,16 @@ import six
 
 
 def convert(folder):
-    json_file = glob(path.join(folder, 'Sim*'))[0]
+    sims = glob(path.join(folder, 'Sim*'))
+    if len(sims) == 0:
+        warnings.warn("No sim found in folder: {}".format(folder))
+        return
+    elif len(sims) > 1:
+        warnings.warn("Multiple sims found in folder: {}\n"
+                      "    Skipping conversion".format(folder))
+        return
+
+    json_file = sims[0]
     with open(json_file) as fh:
         old = json.load(fh)
     sim = mds.Sim(folder, categories=old['categories'], tags=old['tags'])
@@ -17,7 +27,9 @@ def convert(folder):
     # update universe definition
     udef = old_sim['universedef']
     if udef['topology']:
-        args = [udef['topology']['abspath'],]
+        args = [
+            udef['topology']['abspath'],
+        ]
         if udef['trajectory']:
             args.append([abspath for abspath, relpath in udef['trajectory']])
         u = mda.Universe(*args, **udef['kwargs'])
@@ -31,7 +43,8 @@ def convert(folder):
     except KeyError:
         pass
 
-if __name__ == '__main__':
+
+def main():
     import argparse
     parser = argparse.ArgumentParser(
         description="Convert old sims to new sims.",
@@ -45,3 +58,7 @@ if __name__ == '__main__':
 
     for dir in args.directories:
         convert(dir)
+
+
+if __name__ == '__main__':
+    main()
