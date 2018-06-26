@@ -13,13 +13,13 @@ The rules for this file:
 
 ------------------------------------------------------------------------------
 
-??/??/16 
+??/??/16 kaceyreidy
 
     * 0.6.2
 
 Changes
 
-    
+    * Add conversion script from 0.8 to 1.0 (issue #74)
 
 05/16/16 dotsdl, kain88-de
 
