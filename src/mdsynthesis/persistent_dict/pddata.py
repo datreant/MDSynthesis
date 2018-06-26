@@ -14,7 +14,7 @@ pddatafile = 'pdData.h5'
 class pdDataFile(File):
     """Interface to pandas object data files.
 
-    Data is stored as pandas data structures (Series, DataFrame, Panel) in
+    Data is stored as pandas data structures (Series, DataFrame) in
     the HDF5 format. This class gives the needed components for storing
     and retrieving stored data. It uses pandas' HDFStore object as its
     backend.
@@ -28,7 +28,7 @@ class pdDataFile(File):
         return pd.HDFStore(self.filename, 'a')
 
     def add_data(self, key, data):
-        """Add a pandas data object (Series, DataFrame, Panel) to the data file.
+        """Add a pandas data object (Series, DataFrame) to the data file.
 
         If data already exists for the given key, then it is overwritten.
 
@@ -37,8 +37,8 @@ class pdDataFile(File):
                 name given to the data; used as the index for retrieving
                 the data later
             *data*
-                the data object to store; should be either a Series, DataFrame,
-                or Panel
+                the data object to store; should be either a Series or
+                DataFrame
         """
         with self.write():
             # index all columns if possible

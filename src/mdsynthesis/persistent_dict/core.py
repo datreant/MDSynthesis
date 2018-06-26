@@ -40,7 +40,7 @@ class DataFile(object):
         self.datafiletype = datafiletype
 
     def add_data(self, key, data):
-        """Add a pandas data object (Series, DataFrame, Panel), numpy array,
+        """Add a pandas data object (Series, DataFrame), numpy array,
         or pickleable python object to the data file.
 
         If data already exists for the given key, then it is overwritten.
@@ -51,12 +51,12 @@ class DataFile(object):
                 the data later
             *data*
                 the data object to store; should be either a pandas Series,
-                DataFrame, Panel, or a numpy array
+                DataFrame, or a numpy array
         """
         if isinstance(data, np.ndarray):
             self.datafile = npdata.npDataFile(
                 os.path.join(self.datadir, npdata.npdatafile))
-        elif isinstance(data, (pd.Series, pd.DataFrame, pd.Panel, pd.Panel4D)):
+        elif isinstance(data, (pd.Series, pd.DataFrame)):
             self.datafile = pddata.pdDataFile(
                 os.path.join(self.datadir, pddata.pddatafile))
         else:
@@ -87,7 +87,7 @@ class DataFile(object):
         # TODO: add exceptions where appending isn't possible
         if isinstance(data, np.ndarray):
             raise TypeError('Cannot append numpy arrays.')
-        elif isinstance(data, (pd.Series, pd.DataFrame, pd.Panel, pd.Panel4D)):
+        elif isinstance(data, (pd.Series, pd.DataFrame)):
             self.datafile = pddata.pdDataFile(
                 os.path.join(self.datadir, pddata.pddatafile))
             self.datafile.append_data(key, data)

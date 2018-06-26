@@ -170,15 +170,15 @@ class Data(object):
     def __setitem__(self, handle, data):
         """Set dataset corresponding to given handle.
 
-        A data instance must be either a pandas Series, DataFrame, or Panel
-        object. If dataset doesn't exist, it is added. If a dataset already
-        exists for the given handle, it is replaced.
+        A data instance must be either a pandas Series or DataFrame object.
+        If dataset doesn't exist, it is added. If a dataset already exists for
+        the given handle, it is replaced.
 
         :Arguments:
             *handle*
                 name given to data; needed for retrieval
             *data*
-                data to store; must be a pandas Series, DataFrame, or Panel
+                data to store; must be a pandas Series or DataFrame
 
         """
         self.add(handle, data)
@@ -201,7 +201,7 @@ class Data(object):
     def add(self, handle, data):
         """Store data in Treant.
 
-        A data instance can be a pandas object (Series, DataFrame, Panel),
+        A data instance can be a pandas object (Series, DataFrame),
         a numpy array, or a pickleable python object. If the dataset doesn't
         exist, it is added. If a dataset already exists for the given handle,
         it is replaced.
@@ -222,7 +222,7 @@ class Data(object):
         containing the dataset file (``Data.h5``) will NOT be removed if it
         still contains file(s) after the removal of the dataset file.
 
-        For pandas objects (Series, DataFrame, or Panel) subsets of the whole
+        For pandas objects (Series, DataFrame) subsets of the whole
         dataset can be removed using keywords such as *start* and *stop* for
         ranges of rows, and *columns* for selected columns.
 
@@ -312,7 +312,7 @@ class Data(object):
 
         If dataset doesn't exist, ``None`` is returned.
 
-        For pandas objects (Series, DataFrame, or Panel) subsets of the whole
+        For pandas objects (Series, DataFrame) subsets of the whole
         dataset can be returned using keywords such as *start* and *stop* for
         ranges of rows, and *columns* for selected columns.
 
@@ -361,7 +361,7 @@ class Data(object):
     def append(self, handle, data):
         """Append rows to an existing dataset.
 
-        The object must be of the same pandas class (Series, DataFrame, Panel)
+        The object must be of the same pandas class (Series, DataFrame)
         as the existing dataset, and it must have exactly the same columns
         (names included).
 

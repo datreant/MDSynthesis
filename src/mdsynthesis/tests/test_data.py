@@ -99,12 +99,6 @@ class TestTreant:
                                         PandasMixin):
             pass
 
-        class Test_Panel(data.Panel, PandasMixin):
-            pass
-
-        class Test_Panel4D(data.Panel4D, PandasMixin):
-            pass
-
         class NumpyMixin(DataMixin):
             """Test numpy datastructure storage and retrieval"""
             datafile = mds.persistent_dict.npdata.npdatafile
