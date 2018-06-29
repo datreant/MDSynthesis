@@ -32,7 +32,7 @@ HDF5 format when possible.
 Powered by ``datreant`` under the hood
 --------------------------------------
 MDSynthesis is built on top of the general-purpose `datreant`_ library.  The
-Sim is a :class:`~datreant.core.Treant` with special features for working with
+Sim is a :class:`~datreant.Treant` with special features for working with
 molecular dynamics data, but every feature of datreant applies to MDSynthesis.
 
 .. _`datreant`: http://datreant.org/

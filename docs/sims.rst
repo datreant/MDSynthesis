@@ -1,7 +1,7 @@
 ============================================
 Leveraging molecular dynamics data with Sims
 ============================================
-A :class:`~mdsynthesis.Sim` is a :class:`~datreant.core.Treant` with
+A :class:`~mdsynthesis.Sim` is a :class:`~datreant.Treant` with
 specialized components for working with molecular dynamics data. In particular,
 it can store a definition for an MDAnalysis
 :class:`~MDAnalysis.core.AtomGroup.Universe` for painless recall, as well as
@@ -21,13 +21,13 @@ name ::
     <Sim: 'adk'>
 
 And we can immediately give the Sim characteristics like :ref:`tags
-<datreantcore:Tags_guide>`::
+<datreant:Tags_guide>`::
 
     >>> s.tags.add('biased', 'closed-to-open', 'mep')
     >>> s.tags
     <Tags(['biased', 'closed-to-open', 'MEP'])>
 
-and :ref:`categories <datreantcore:Categories_guide>`::
+and :ref:`categories <datreant:Categories_guide>`::
 
     >>> s.categories['sampling method'] = 'DIMS'
     >>> s.categories['sampling '] = 'heavy atom'

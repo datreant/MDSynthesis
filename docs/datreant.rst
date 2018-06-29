@@ -4,7 +4,7 @@ Using Sims with ``datreant`` objects
 Since MDSynthesis is built on top of `datreant`_, many datreant components are
 exposed in the MDSynthesis namespace.
 
-.. currentmodule:: datreant.core
+.. currentmodule:: datreant
 
 Classes
 =======

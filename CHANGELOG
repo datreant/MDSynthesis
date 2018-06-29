@@ -13,13 +13,15 @@ The rules for this file:
 
 ------------------------------------------------------------------------------
 
-??/??/16 kaceyreidy
+??/??/16 kaceyreidy, kain88-de, dotsdl
 
     * 1.0
 
 Changes
 
     * Add conversion script from 0.8 to 1.0 (issue #74)
+    * Added `datreant.data` functionality directly into library (issue #72)
+    * Changes to library to align with upstream `datreant`
 
 05/16/16 dotsdl, kain88-de
 

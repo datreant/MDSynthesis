@@ -1,9 +1,9 @@
 ======================
 Installing MDSynthesis
 ======================
-Since MDSynthesis requires ``datreant.data``, which uses HDF5 as the file
-format of choice for persistence, you will first need to install the HDF5
-libraries either using your package manager or manually.
+Since MDSynthesis uses HDF5 as the file format of choice for persistence of
+intermediate datasets, you will first need to install the HDF5 libraries either
+using your package manager or manually.
 
 On **Ubuntu 14.04** this will be ::
 
@@ -39,13 +39,11 @@ Dependencies
 ============
 The dependencies of MDSynthesis are:
 
-- `MDAnalysis`_: 0.14 or higher
-- `datreant.core`_: 0.6.0 or higher
-- `datreant.data`_: 0.6.0 or higher
+- `MDAnalysis`_: 0.18 or higher
+- `datreant`_: 1.0.0 or higher
 
 .. _`MDAnalysis`: http://www.mdanalysis.org
-.. _`datreant.core`: http://datreant.readthedocs.org/
-.. _`datreant.data`: http://datreantdata.readthedocs.org/
+.. _`datreant`: http://datreant.readthedocs.org/
 
 Installing from source
 ======================

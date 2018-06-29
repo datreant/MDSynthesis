@@ -5,8 +5,8 @@ markers for simulation data, giving an interface to raw topologies and
 trajectories by way of MDAnalysis.
 
 The components documented here are those included within ``mdsynthesis``.
-However, the API elements of `:mod:datreant.core` and `:mod:datreant.data`
-are also available for use with Sims.
+However, the API elements of `:mod:datreant` are also available for use with
+Sims.
 
 .. _Sim_api:
 
