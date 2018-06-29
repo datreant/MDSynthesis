@@ -30,7 +30,7 @@ setup(name='mdsynthesis',
       license='GPL 2',
       long_description=open('README.rst').read(),
       entry_points={'console_scripts':
-                  ['mds_06to1=mdsynthesis.scripts.mds_06to1.main']},
+                  ['mds_06to1=mdsynthesis.scripts.mds_06to1:main']},
       install_requires=[
                 'datreant',
                 'MDAnalysis>=0.16.0',

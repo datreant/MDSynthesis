@@ -43,6 +43,8 @@ install:
 # run tests
 script: 
   - py.test --cov src --pep8 src
+  # test conversion script
+  - mds_06to1 --help
 
 after_success:
   - codecov
