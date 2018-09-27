@@ -24,7 +24,7 @@ env:
 
 matrix:
   allow_failures:
-    - env: DATREANT_DEV="false"
+    - env: DATREANT_DEV="true"
 
 # install python dependencies
 install:
