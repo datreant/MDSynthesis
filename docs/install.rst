@@ -41,9 +41,16 @@ The dependencies of MDSynthesis are:
 
 - `MDAnalysis`_: 0.18 or higher
 - `datreant`_: 1.0.0 or higher
+- `pandas`_: 0.16.1 or higher
+- `PyTables`_: 3.2.0 or higher
+- `h5py`_: 2.5.0 or higher
 
 .. _`MDAnalysis`: http://www.mdanalysis.org
 .. _`datreant`: http://datreant.readthedocs.org/
+.. _`pandas`: http://pandas.pydata.org/
+.. _`PyTables`: http://www.pytables.org/
+.. _`h5py`: http://www.h5py.org/
+
 
 Installing from source
 ======================

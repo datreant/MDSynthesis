@@ -299,6 +299,6 @@ napoleon_use_rtype = True
 # intersphinx mapping to datreant docs and others
 intersphinx_mapping = {'http://docs.python.org/': None,
                        'datreant': ('http://datreant.readthedocs.org/en/master/', None),
-                       'MDAnalysis': ('http://pythonhosted.org/MDAnalysis/', None)}
+                       'MDAnalysis': ('https://www.mdanalysis.org/docs/', None)}
 
 
