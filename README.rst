@@ -4,6 +4,13 @@ MDSynthesis: a persistence engine for molecular dynamics data
 
 |zen| |docs| |build| |cov|
 
+--------------
+
+**Development of MDSynthesis has stopped. For new projects we recommend 
+you use `datreant`_ directly.**
+
+---------------
+
 As computing power increases, it is now possible to produce hundreds of
 molecular dynamics simulation trajectories that vary widely in length,
 system size, composition, starting conditions, and other parameters. Managing
