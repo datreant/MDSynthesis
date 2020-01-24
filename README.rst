@@ -7,7 +7,7 @@ MDSynthesis: a persistence engine for molecular dynamics data
 --------------
 
 **Development of MDSynthesis has stopped. For new projects we recommend 
-you use `datreant`_ directly.**
+you use** `datreant`_ **directly.**
 
 ---------------
 
